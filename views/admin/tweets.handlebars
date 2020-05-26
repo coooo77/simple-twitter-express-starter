@@ -1,1 +1,36 @@
-<h1>admin/tweets</h1>
+<h1 class="mb-0">Twitter後台</h1>
+<div class="mb-3">
+  <a href="/admin/tweets">Tweeks</a> |
+  <a href="/admin/users">Users</a>
+</div>
+
+<br />
+<br />
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">User</th>
+      <th scope="col">Content</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each tweet}}
+      <tr>
+        <th scope="row">{{this.User.id}}</th>
+        <td>{{this.User.name}}</td>
+        <td>
+          <p>{{this.description}}
+          </p>
+        </td>
+        <td>
+          <form action="/admin/tweets/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-link">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
