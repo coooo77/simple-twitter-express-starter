@@ -2,6 +2,8 @@ const twitterController = require('../controllers/twitterController')
 const adminController = require('../controllers/adminController')
 const userController = require('../controllers/userController')
 
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {
@@ -37,4 +39,8 @@ module.exports = (app, passport) => {
     }),
     userController.signIn
   )
+
+  /****  User  ****/
+  app.get('/users/:id/edit', userController.editUser)
+  app.put('/users/:id/edit', upload.single('image'), userController.putUser)
 }
