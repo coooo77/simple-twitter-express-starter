@@ -9,6 +9,7 @@ module.exports = (app) => {
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
   app.get('/admin/tweets', adminController.getTweets)
+  app.post('/admin/tweets/:id', adminController.deleteTweets)
 
   /****  Register  ****/
   app.get('/signup', userController.signUpPage)
