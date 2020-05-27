@@ -14,6 +14,8 @@ app.engine('handlebars', handlebars({
   defaultLayout: 'main'
 }))
 app.set('view engine', 'handlebars')
+const hbs = handlebars.create({})
+hbs.handlebars.registerHelper(require('./config/handlebars-helpers'))
 
 // body-parser
 app.use(bodyParser.urlencoded({ extended: true }))

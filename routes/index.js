@@ -4,11 +4,25 @@ const userController = require('../controllers/userController')
 
 
 module.exports = (app, passport) => {
+  const authenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+      return next()
+    }
+    res.redirect('/signin')
+  }
+  const authenticatedAdmin = (req, res, next) => {
+    if (req.isAuthenticated()) {
+      if (req.user.role === 'Admin') { return next() }
+      return res.redirect('/')
+    }
+    res.redirect('/signin')
+  }
+
   app.get('/', (req, res) => res.redirect('/tweets'))
-  app.get('/tweets', twitterController.getTweets)
+  app.get('/tweets', authenticated, twitterController.getTweets)
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
-  app.get('/admin/tweets', adminController.getTweets)
+  app.get('/admin/tweets', authenticated, adminController.getTweets)
 
   /****  Register  ****/
   app.get('/signup', userController.signUpPage)

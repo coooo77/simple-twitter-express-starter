@@ -13,15 +13,23 @@
 <body>
   <!-- Image and text -->
   <nav class="navbar navbar-light" style="background-color: #a8d6d8;">
-    <h2>Bootstrap</h2>
-    <div class="float-right">
-      <a class="d-inline-block" href="#">
-        <img src="{{user.avatar}}" width="50" height="50" class="align-top" alt="" loading="lazy">
-      </a>
-      <a class="navbar-brand align-bottom" href="#">
-        <h5>Logout</h5>
-      </a>
-    </div>
+    <a class="navbar-brand" href="/">Simple Twitter</a>
+    {{#if user}}
+      <div class="float-right">
+        {{#ifCond user.role "Admin"}}
+          <a href="/admin" class="navbar-brand align-bottom">
+            <h6>Admin 後台</h6>
+          </a>
+        {{/ifCond}}
+
+        <a class="d-inline-block" href="#">
+          <img src="{{user.avatar}}" width="50" height="50" class="align-top" alt="" loading="lazy">
+        </a>
+        <a class="navbar-brand align-bottom" href="#">
+          <h6>Logout</h6>
+        </a>
+      </div>
+    {{/if}}
   </nav>
   <main role="main">
     <div class="container">
