@@ -2,6 +2,8 @@ const twitterController = require('../controllers/twitterController')
 const adminController = require('../controllers/adminController')
 const userController = require('../controllers/userController')
 
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 
 module.exports = (app) => {
   app.get('/', (req, res) => res.redirect('/tweets'))
