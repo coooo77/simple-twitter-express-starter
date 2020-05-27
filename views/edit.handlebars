@@ -1,0 +1,27 @@
+{{!-- views/edit.handlebars --}}
+<form action="/users/{{user.id}}/edit?_method=PUT" method="POST" enctype="multipart/form-data">
+  <div class="row mt-3">
+    <div class="col-sm-3">
+      <img class="img-responsive center-block" src="{{user.avatar}}" style="width: 250px;margin-bottom: 25px;">
+      <div class="form-group">
+        <label for="image">Image</label>
+        <input type="file" class="form-control-file" id="image" name="image">
+      </div>
+    </div>
+    <div class="col-sm-9">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="{{user.name}}">
+      </div>
+      <div class="form-group">
+        <label for="introduction">introduction</label>
+        <textarea class="form-control" id="introduction" name="introduction" id="introduction" rows="3"
+          placeholder="Enter introduction">{{user.introduction}}</textarea>
+      </div>
+
+    </div>
+  </div>
+  <div class="row">
+    <button type="submit" class="btn btn-primary ml-auto mr-3">Update</button>
+  </div>
+</form>

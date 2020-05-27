@@ -1,8 +1,9 @@
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
 const Sequelize = require('sequelize');
-
 
 const userController = {
 
@@ -35,7 +36,62 @@ const userController = {
         }
       })
     }
+  },
+  signInPage: (req, res) => {
+    return res.render('signin')
+  },
+  signIn: (req, res) => {
+    req.flash('success_messages', '成功登入！')
+    res.redirect('/tweets')
+  },
+
+  editUser: async (req, res) => {
+    if (req.user.id === Number(req.params.id)) {
+      const user = await User.findByPk(req.user.id)
+      res.render('edit', { user })
+    } else {
+      res.redirect('back')
+    }
+  },
+
+  putUser: (req, res) => {
+    if (!req.body.name) {
+      req.flash('error_messages', "name didn't exist")
+      return res.redirect('back')
+    }
+    const { file } = req
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        return User.findByPk(req.user.id)
+          .then((user) => {
+            user.update({
+              ...user,
+              name: req.body.name,
+              introduction: req.body.introduction,
+              avatar: file ? img.data.link : user.avatar
+            }).then((user) => {
+              req.flash('success_messages', 'User data was successfully updated')
+              res.redirect(`/users/${req.user.id}/tweets`)
+            })
+          })
+      })
+    } else {
+      return User.findByPk(req.user.id)
+        .then((user) => {
+          user.update({
+            ...user,
+            name: req.body.name,
+            introduction: req.body.introduction,
+            avatar: user.avatar
+          }).then(user => {
+            req.flash('success_messages', 'User was successfully updated')
+            res.redirect(`/users/${req.user.id}/tweets`)
+          })
+        })
+    }
   }
+
 
 }
 
