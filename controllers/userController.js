@@ -35,8 +35,14 @@ const userController = {
         }
       })
     }
+  },
+  signInPage: (req, res) => {
+    return res.render('signin')
+  },
+  signIn: (req, res) => {
+    req.flash('success_messages', '成功登入！')
+    res.redirect('/tweets')
   }
-
 }
 
 module.exports = userController
