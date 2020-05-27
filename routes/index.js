@@ -13,4 +13,8 @@ module.exports = (app) => {
   /****  Register  ****/
   app.get('/signup', userController.signUpPage)
   app.post('/signup', userController.signUp)
+
+  /****  User  ****/
+  app.get('/users/:id/edit', userController.editUser)
+  app.put('/users/:id/edit', upload.single('image'), userController.putUser)
 }
