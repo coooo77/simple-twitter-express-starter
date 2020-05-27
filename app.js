@@ -7,6 +7,11 @@ const bodyParser = require('body-parser')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('./config/passport')
+const methodOverride = require('method-override')
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 // use helpers.getUser(req) to replace req.user
 // use helpers.ensureAuthenticated(req) to replace req.isAuthenticated()
@@ -19,6 +24,9 @@ hbs.handlebars.registerHelper(require('./config/handlebars-helpers'))
 
 // body-parser
 app.use(bodyParser.urlencoded({ extended: true }))
+
+// set method-override
+app.use(methodOverride('_method'))
 
 // setup session and flash
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
