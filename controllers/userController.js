@@ -6,6 +6,7 @@ const User = db.User
 const Tweet = db.Tweet
 const Reply = db.Reply
 const Like = db.Like
+const Followship = db.Followship
 const Sequelize = require('sequelize');
 
 const userController = {
@@ -96,34 +97,53 @@ const userController = {
   },
 
   getUser: async (req, res) => {
-    // User personal info
-    let isOwner = req.user.id === Number(req.params.id)
-    const user = await User.findByPk(req.params.id, {
-      include: [
-        { model: Reply },
-        { model: Tweet },
-        { model: Tweet, as: 'LikedTweets' },
-        { model: User, as: 'Followers' },
-        { model: User, as: 'Followings' },
-      ]
-    })
-
-    // User tweets info
-    let tweets = await Tweet.findAll({
-      where: { UserId: req.params.id },
-      order: [['createdAt', 'DESC']],
-      include: [
-        { model: User },
-        { model: Reply },
-        { model: User, as: 'LikedUsers' }
-      ]
-    })
-    return res.render('profile', {
-      user,
-      tweets,
-      isOwner
-    })
-
+    try {
+      // User personal info
+      let isOwner = req.user.id === Number(req.params.id)
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Tweet },
+          { model: Tweet, as: 'LikedTweets' },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
+        ]
+      })
+      const numOfTweeks = user.Tweets ? user.Tweets.length : 0
+      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfFollowers = user.Followers ? user.Followers.length : 0
+      const numOfFollowings = user.Followings ? user.Followings.length : 0
+      const isFollowed = req.user.Followings.some(d => d.id === user.id)
+      // User tweets info
+      let tweets = await Tweet.findAll({
+        where: { UserId: req.params.id },
+        order: [['createdAt', 'DESC']],
+        include: [
+          { model: User },
+          { model: Reply },
+          { model: User, as: 'LikedUsers' }
+        ]
+      })
+      let tweetsData = JSON.parse(JSON.stringify(tweets))
+      tweetsData = tweetsData.map(tweet => ({
+        ...tweet,
+        numOfReplies: tweet.Replies ? tweet.Replies.length : 0,
+        numOfLikes: tweet.LikedUsers ? tweet.LikedUsers.length : 0
+      }))
+      return res.render('profile', {
+        user,
+        tweets: tweetsData,
+        isOwner,
+        isFollowed,
+        numOfTweeks,
+        numOfLikedTweets,
+        numOfFollowers,
+        numOfFollowings
+      })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '無法讀取使用者資料，請稍後再嘗試!')
+      return res.redirect('back')
+    }
   }
 }
 
