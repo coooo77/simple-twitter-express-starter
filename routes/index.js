@@ -25,6 +25,7 @@ module.exports = (app, passport) => {
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
   app.get('/admin/tweets', authenticated, adminController.getTweets)
+  app.post('/admin/tweets/:id', authenticated, adminController.deleteTweets)
 
   /****  Register  ****/
   app.get('/signup', userController.signUpPage)
