@@ -29,6 +29,20 @@ const twitterController = {
     }).then(tweet => {
       return res.redirect('/tweets')
     })
+  },
+  getTweetReplies: async (req, res) => {
+    if (!req.query.userId) {
+      return res.redirect('back')
+    }
+    const replies = await Reply.findAll({ where: { TweetId: req.params.tweet_id }, include: [User], raw: true, nest: true })
+    const tweet = await Tweet.findByPk(req.params.tweet_id)
+    const user = await User.findByPk(req.query.userId)
+    if (!user) {
+      req.flash('error_messages', "user didn't exist")
+      return res.redirect('back')
+    }
+
+    return res.render('tweet', { tweet: tweet.toJSON(), tweetOwner: user.toJSON(), replies })
   }
 }
 
