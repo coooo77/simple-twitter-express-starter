@@ -43,6 +43,17 @@ const twitterController = {
     }
 
     return res.render('tweet', { tweet: tweet.toJSON(), tweetOwner: user.toJSON(), replies })
+  },
+  postTweetReplies: async (req, res) => {
+    if (!req.body.comment || !req.body.userId) {
+      return res.redirect('back')
+    }
+    const reply = await Reply.create({
+      TweetId: req.params.tweet_id,
+      UserId: req.body.userId,
+      comment: req.body.comment
+    })
+    return res.redirect(`/tweets/${req.params.tweet_id}/replies`)
   }
 }
 
