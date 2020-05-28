@@ -1,33 +1,53 @@
 <div class="row mt-5">
-  <div class="col-4 pr-5">
+  <div class="col-md-4 pr-5 order-2 order-md-1">
     <div class="text-center">
-      <img class="avatar img-circle img-thumbnail" width="200" height="200"
-        src="https://lighthouse-cdn.alphacamp.co/default/medium_user_photo.jpg" alt="avatar">
+      <img class="avatar img-circle img-thumbnail" width="200" height="200" src="{{tweetOwner.avatar}}" alt="avatar">
     </div>
 
-    <ul class="list-group list-group-flush p-5">
+    <ul class="list-group list-group-flush py-5 px-lg-5">
       <li class="list-group-item border-top-0 border-bottom-0">
-        <h3>{{{tweetOwner.name}}}</h3>
+        <h3>{{tweetOwner.name}}</h3>
       </li>
       <li class="list-group-item border-top-0 border-bottom-0">
         <p>{{tweetOwner.introduction}}</p>
       </li>
       <li class="list-group-item d-flex justify-content-between align-items-center border-top-0">
-        Cras justo odio
-        <span class="badge badge-primary badge-pill">14</span>
+        Tweets
+        <span class="badge badge-primary badge-pill">{{numOfTweeks}}</span>
       </li>
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        Dapibus ac facilisis in
-        <span class="badge badge-primary badge-pill">2</span>
+        Following
+        <span class="badge badge-primary badge-pill">{{numOfFollowings}}</span>
       </li>
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        Morbi leo risus
-        <span class="badge badge-primary badge-pill">1</span>
+        Follower
+        <span class="badge badge-primary badge-pill">{{numOfFollowers}}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        like
+        <span class="badge badge-primary badge-pill">{{numOfLikedTweets}}</span>
+      </li>
+      <li class="list-group-item border-top-0">
+        {{#if isOwner}}
+          <a href="/users/{{user.id}}/edit" class="btn btn-md btn-outline-primary mx-auto">Edit Profile</a>
+        {{else}}
+          {{#if isFollowed }}
+            <form action="/followings/{{user.id}}?_method=DELETE" method="POST" style="display: contents;">
+              <button type="submit" class="btn btn-md btn-outline-danger mx-auto">Unfollow</button>
+            </form>
+          {{else}}
+            <form action="/followings/{{user.id}}" method="POST" style="display: contents;">
+              <button type="submit" class="btn btn-md btn-outline-primary mx-auto">Follow</button>
+            </form>
+          {{/if}}
+        {{/if}}
       </li>
     </ul>
   </div>
-  <div class="col-8">
-    <div class="position-relative" style="right: 26px;">
+  <div class="col-md-8 order-md-1">
+
+    {{!-- secion Tweet --}}
+    <div class="position-relative" style="right: 0.5rem;">
       <h2>Tweets</h2>
     </div>
     <div class="list-group-item list-group-item-action flex-column align-items-start position-relative mt-4 mb-5">
@@ -39,11 +59,26 @@
       <div class="d-flex justify-content-between">
         <p>{{tweet.description}}</p>
       </div>
-
-      <a href="/tweets/{{tweet.id}}/replies?userId={{tweetOwner.id}}">Reply({{{replies.length}}})</a>
-
+      <div class="row align-items-center">
+        <a href="/tweets/{{tweet.id}}/replies?userId={{tweetOwner.id}}">Reply({{{replies.length}}})</a>
+        {{#if isLiked}}
+          <form action="/tweets/{{tweet.id}}/unlike" method="POST">
+            <button class="btn btn-link"><i class="fa fa-thumbs-up" aria-hidden="true"></i>
+              Like({{{numOfLikes}}})
+            </button>
+          </form>
+        {{else}}
+          <form action="/tweets/{{tweet.id}}/like" method="POST">
+            <button class="btn btn-link"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+              Like({{{numOfLikes}}})
+            </button>
+          </form>
+        {{/if}}
+      </div>
     </div>
-    <div class="position-relative" style="right: 26px;">
+
+    {{!-- section Replies --}}
+    <div class="position-relative" style="right: 0.5em;">
       <h2>Replies</h2>
     </div>
     <div class="mt-4 list-group">
@@ -63,11 +98,11 @@
           </div>
         {{/each}}
       {{/if}}
-      <form class="mb-5" action="/tweets/{{tweet.id}}/replies" method="POST">
+      <form class="mb-5 post-tweet" action="/tweets/{{tweet.id}}/replies" method="POST">
         <div class="mb-1">
-          <label for="validationTextarea"></label>
-          <textarea class="form-control" name="comment" placeholder="Required example textarea" rows="3" maxlength="140"
-            required></textarea>
+
+          <textarea class="form-control" name="comment" id="comment" placeholder="Enter your reply" rows="3"
+            maxlength="140" required></textarea>
           <div class="invalid-feedback">
             Please enter a message in the textarea.
           </div>
@@ -80,3 +115,5 @@
     </div>
   </div>
 </div>
+
+<script src="/javascripts/main.js"></script>
