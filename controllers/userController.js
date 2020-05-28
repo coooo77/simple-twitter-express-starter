@@ -3,6 +3,10 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
+const Tweet = db.Tweet
+const Reply = db.Reply
+const Like = db.Like
+const Followship = db.Followship
 const Sequelize = require('sequelize');
 
 const userController = {
@@ -90,9 +94,87 @@ const userController = {
           })
         })
     }
+  },
+
+  getUser: async (req, res) => {
+    try {
+      // User personal info
+      let isOwner = req.user.id === Number(req.params.id)
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Tweet },
+          { model: Tweet, as: 'LikedTweets' },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
+        ]
+      })
+      const numOfTweeks = user.Tweets ? user.Tweets.length : 0
+      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfFollowers = user.Followers ? user.Followers.length : 0
+      const numOfFollowings = user.Followings ? user.Followings.length : 0
+      const isFollowed = req.user.Followings.some(d => d.id === user.id)
+      // User tweets info
+      let tweets = await Tweet.findAll({
+        where: { UserId: req.params.id },
+        order: [['createdAt', 'DESC']],
+        include: [
+          { model: User },
+          { model: Reply },
+          { model: User, as: 'LikedUsers' }
+        ]
+      })
+      let tweetsData = JSON.parse(JSON.stringify(tweets))
+      tweetsData = tweetsData.map(tweet => ({
+        ...tweet,
+        numOfReplies: tweet.Replies ? tweet.Replies.length : 0,
+        numOfLikes: tweet.LikedUsers ? tweet.LikedUsers.length : 0
+      }))
+      return res.render('profile', {
+        user,
+        tweets: tweetsData,
+        isOwner,
+        isFollowed,
+        numOfTweeks,
+        numOfLikedTweets,
+        numOfFollowers,
+        numOfFollowings
+      })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '無法讀取使用者資料，請稍後再嘗試!')
+      return res.redirect('back')
+    }
+  },
+
+  addFollowing: async (req, res) => {
+    try {
+      await Followship.create({
+        followerId: req.user.id,
+        followingId: req.params.followingId
+      })
+      return res.redirect('back')
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '追蹤失敗，請稍後再嘗試!')
+      return res.redirect('back')
+    }
+  },
+  removeFollowing: async (req, res) => {
+    try {
+      const followship = await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: req.params.followingId
+        }
+      })
+      await followship.destroy()
+      return res.redirect('back')
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '取消追蹤失敗，請稍後再嘗試!')
+      return res.redirect('back')
+    }
   }
-
-
 }
 
 module.exports = userController
