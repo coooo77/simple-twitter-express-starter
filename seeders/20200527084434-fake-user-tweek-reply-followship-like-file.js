@@ -83,7 +83,7 @@ module.exports = {
       const maxFollower = 6
       const randomFollowers = Math.floor(Math.random() * maxFollower)
       const data = getRandomFollower(randomFollowers, id, userId)
-      insertData.push(...data)
+      dataForFollowships.push(...data)
     })
     await queryInterface.bulkInsert('Followships',
       dataForFollowships, {});

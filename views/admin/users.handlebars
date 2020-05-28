@@ -1,0 +1,24 @@
+<h1 class="mb-0">Twitter後台</h1>
+<div class="mb-3">
+  <a href="/admin/tweets">Tweeks</a> |
+  <a href="/admin/users">Users</a>
+</div>
+
+<br />
+<br />
+<div class="container">
+  <div class="row">
+    {{#each userData}}
+      <div class="col-3 bg-light mb-2 border border-white p-0">
+        <img class="card-img-top" src="{{this.avatar}}" alt="user image">
+        <div class="card-body">
+          <h5 class="card-title">{{this.name}}</h5>
+          <p class="card-text mb-0">推播數量：{{this.numOfTweeks}}</p>
+          <p class="card-text mb-0">推播被 like 的數量：{{this.numOfLikedTweets}}</p>
+          <p class="card-text mb-0">關注人數：{{this.numOfFollowings}}</p>
+          <p class="card-text">跟隨者人數：{{this.numOfFollowers}}</p>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
