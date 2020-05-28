@@ -19,13 +19,19 @@ module.exports = (app, passport) => {
     }
     res.redirect('/signin')
   }
-
+  /****  Tweet  ****/
   app.get('/', (req, res) => res.redirect('/tweets'))
   app.get('/tweets', authenticated, twitterController.getTweets)
+  app.post('/tweets', authenticated, twitterController.postTweets)
+  app.get('/tweets/:tweet_id/replies', authenticated, twitterController.getTweetReplies)
+  app.post('/tweets/:tweet_id/replies', authenticated, twitterController.postTweetReplies)
+
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
-  app.get('/admin/tweets', authenticated, adminController.getTweets)
-  app.post('/admin/tweets/:id', authenticated, adminController.deleteTweets)
+  app.get('/admin/tweets', authenticated, authenticatedAdmin, adminController.getTweets)
+  app.post('/admin/tweets/:id', authenticated, authenticatedAdmin, adminController.deleteTweets)
+  app.get('/admin/users', authenticated, authenticatedAdmin, adminController.getUsers)
+
 
   /****  Register  ****/
   app.get('/signup', userController.signUpPage)
@@ -49,5 +55,4 @@ module.exports = (app, passport) => {
   app.get('/users/:id/edit', authenticated, userController.editUser)
   app.put('/users/:id/edit', authenticated, upload.single('image'), userController.putUser)
   app.get('/users/:id/tweets', authenticated, userController.getUser)
-
 }

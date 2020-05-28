@@ -36,6 +36,32 @@ const adminController = {
       req.flash('error_messages', 'Tweek刪除失敗!')
       return res.redirect('back')
     }
+  },
+  getUsers: async (req, res) => {
+    try {
+      let users = await User.findAll({
+        include: [
+          Tweet,
+          { model: Tweet, as: 'LikedTweets' },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' }
+        ]
+      })
+      let userData = JSON.parse(JSON.stringify(users))
+      userData = userData.map(user => ({
+        ...user,
+        numOfTweeks: user.Tweets ? user.Tweets.length : 0,
+        numOfLikedTweets: user.LikedTweets ? user.LikedTweets.length : 0,
+        numOfFollowers: user.Followers ? user.Followers.length : 0,
+        numOfFollowings: user.Followings ? user.Followings.length : 0
+      }))
+      userData = userData.sort((a, b) => b.numOfTweeks - a.numOfTweeks)
+      return res.render('admin/users', { userData })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '無法讀取後台使用者資料，請稍後再嘗試!')
+      return res.redirect('back')
+    }
   }
 }
 
