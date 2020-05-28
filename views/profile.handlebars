@@ -12,13 +12,16 @@
       <div class="row">
         {{#if isOwner}}
         <a href="/users/{{user.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
-        {{/if}}
-        {{#if isFollowed }}
-        <form action="/followships/{{user.id}}?_method=DELETE" method="POST" style="display: contents;"><button
-            type="submit" class="btn btn-lg btn-outline-danger mx-auto">Unfollow</button></form>
         {{else}}
-        <form action="/followships/{{user.id}}" method="POST" style="display: contents;"><button type="submit"
-            class="btn btn-lg btn-outline-primary mx-auto">Follow</button></form>
+        {{#if isFollowed }}
+        <form action="/followings/{{user.id}}?_method=DELETE" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-lg btn-outline-danger mx-auto">Unfollow</button>
+        </form>
+        {{else}}
+        <form action="/followings/{{user.id}}" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-lg btn-outline-primary mx-auto">Follow</button>
+        </form>
+        {{/if}}
         {{/if}}
       </div>
     </div>

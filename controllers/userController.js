@@ -144,6 +144,36 @@ const userController = {
       req.flash('error_messages', '無法讀取使用者資料，請稍後再嘗試!')
       return res.redirect('back')
     }
+  },
+
+  addFollowing: async (req, res) => {
+    try {
+      await Followship.create({
+        followerId: req.user.id,
+        followingId: req.params.followingId
+      })
+      return res.redirect('back')
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '追蹤失敗，請稍後再嘗試!')
+      return res.redirect('back')
+    }
+  },
+  removeFollowing: async (req, res) => {
+    try {
+      const followship = await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: req.params.followingId
+        }
+      })
+      await followship.destroy()
+      return res.redirect('back')
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '取消追蹤失敗，請稍後再嘗試!')
+      return res.redirect('back')
+    }
   }
 }
 
