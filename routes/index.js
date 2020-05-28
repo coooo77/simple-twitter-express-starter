@@ -28,8 +28,10 @@ module.exports = (app, passport) => {
 
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
-  app.get('/admin/tweets', authenticated, adminController.getTweets)
-  app.post('/admin/tweets/:id', authenticated, adminController.deleteTweets)
+  app.get('/admin/tweets', authenticated, authenticatedAdmin, adminController.getTweets)
+  app.post('/admin/tweets/:id', authenticated, authenticatedAdmin, adminController.deleteTweets)
+  app.get('/admin/users', authenticated, authenticatedAdmin, adminController.getUsers)
+
 
   /****  Register  ****/
   app.get('/signup', userController.signUpPage)
