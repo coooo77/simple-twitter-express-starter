@@ -17,6 +17,18 @@ const twitterController = {
     )
 
     return res.render('tweets', { tweets })
+  },
+  postTweets: (req, res) => {
+    if (!req.body.description) {
+      req.flash('error_messages', "description didn't exist")
+      return res.redirect('back')
+    }
+    return Tweet.create({
+      description: req.body.description,
+      UserId: req.user.id
+    }).then(tweet => {
+      return res.redirect('/tweets')
+    })
   }
 }
 
