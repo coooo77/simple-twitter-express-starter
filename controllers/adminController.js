@@ -50,10 +50,10 @@ const adminController = {
       let userData = JSON.parse(JSON.stringify(users))
       userData = userData.map(user => ({
         ...user,
-        numOfTweeks: user.Tweets !== undefined ? user.Tweets.length : 0,
-        numOfLikedTweets: user.LikedTweets !== undefined ? user.LikedTweets.length : 0,
-        numOfFollowers: user.Followers !== undefined ? user.Followers.length : 0,
-        numOfFollowings: user.Followings !== undefined ? user.Followings.length : 0
+        numOfTweeks: user.Tweets ? user.Tweets.length : 0,
+        numOfLikedTweets: user.LikedTweets ? user.LikedTweets.length : 0,
+        numOfFollowers: user.Followers ? user.Followers.length : 0,
+        numOfFollowings: user.Followings ? user.Followings.length : 0
       }))
       userData = userData.sort((a, b) => b.numOfTweeks - a.numOfTweeks)
       return res.render('admin/users', { userData })
