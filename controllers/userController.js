@@ -3,6 +3,9 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
+const Tweet = db.Tweet
+const Reply = db.Reply
+const Like = db.Like
 const Sequelize = require('sequelize');
 
 const userController = {
@@ -90,9 +93,38 @@ const userController = {
           })
         })
     }
+  },
+
+  getUser: async (req, res) => {
+    // User personal info
+    let isOwner = req.user.id === Number(req.params.id)
+    const user = await User.findByPk(req.params.id, {
+      include: [
+        { model: Reply },
+        { model: Tweet },
+        { model: Tweet, as: 'LikedTweets' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
+      ]
+    })
+
+    // User tweets info
+    let tweets = await Tweet.findAll({
+      where: { UserId: req.params.id },
+      order: [['createdAt', 'DESC']],
+      include: [
+        { model: User },
+        { model: Reply },
+        { model: User, as: 'LikedUsers' }
+      ]
+    })
+    return res.render('profile', {
+      user,
+      tweets,
+      isOwner
+    })
+
   }
-
-
 }
 
 module.exports = userController
