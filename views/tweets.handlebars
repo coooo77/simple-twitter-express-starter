@@ -1,16 +1,16 @@
-<div class="row">
+<div class="row mt-5">
   <div class="col-8">
-    <form class="" action="/tweets" method="POST">
+    <form class="post-tweet" action="/tweets" method="POST">
       <div class="mb-1">
-        <label for="validationTextarea"></label>
-        <textarea class="form-control" name="description" placeholder="Required example textarea" rows="3"
+
+        <textarea class="form-control" id="description" name="description" placeholder="Post your tweet" rows="3"
           maxlength="140" required></textarea>
         <div class="invalid-feedback">
           Please enter a message in the textarea.
         </div>
       </div>
       <div class="d-flex justify-content-end">
-        <button class="btn btn-outline-primary mt-3 float-right">submit</button>
+        <button class="btn btn-outline-primary mt-3 float-right">Tweet</button>
       </div>
     </form>
 
@@ -19,25 +19,25 @@
       {{#each tweets}}
         <div class="list-group-item list-group-item-action flex-column align-items-start position-relative mb-2">
 
-          <img class="float-left position-relative" style="left:-7px;" src="{{../user.avatar}}" width="80" height="80"
+          <img class="float-left position-relative" style="left:-7px;" src="{{this.User.avatar}}" width="80" height="80"
             alt="">
           <a class="mb-1" href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
           <small>{{moment this.createdAt}}</small>
           <div class="d-flex justify-content-between">
             <p>{{this.description}}</p>
           </div>
-          {{#if this.Reply}}
-            <a href="/tweets/{{this.id}}/replies?userId={{this.User.id}}">Reply({{{this.Reply.length}}})</a>
-          {{else}}
-            <a href="/tweets/{{this.id}}/replies?userId={{this.User.id}}">Reply(0)</a>
-          {{/if}}
+
+          <a href="/tweets/{{this.id}}/replies?userId={{this.User.id}}">Reply({{{this.ReplyCount}}})</a>
+
         </div>
       {{/each}}
     </div>
 
-
+    <script src="/javascripts/main.js"></script>
 
 
   </div>
-  <div class="col-4"></div>
+  <div class="col-4">
+    <h2>Popular</h2>
+  </div>
 </div>

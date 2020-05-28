@@ -36,6 +36,9 @@ app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 
+//include style.css
+app.use(express.static('public'))
+
 app.use((req, res, next) => {
   res.locals.success_messages = req.flash('success_messages')
   res.locals.error_messages = req.flash('error_messages')
@@ -45,4 +48,3 @@ app.use((req, res, next) => {
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 require('./routes')(app, passport)
-module.exports = app
