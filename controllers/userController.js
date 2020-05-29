@@ -49,6 +49,12 @@ const userController = {
     res.redirect('/tweets')
   },
 
+  logout: (req, res) => {
+    req.flash('success_messages', '登出成功！')
+    req.logout()
+    res.redirect('/signin')
+  },
+
   editUser: async (req, res) => {
     if (req.user.id === Number(req.params.id)) {
       const user = await User.findByPk(req.user.id)
