@@ -56,4 +56,6 @@ module.exports = (app, passport) => {
   app.put('/users/:id/edit', authenticated, upload.single('image'), userController.putUser)
   app.get('/users/:id/tweets', authenticated, userController.getUser)
   app.get('/users/:id/followers', authenticated, userController.getFollowers)
+  app.get('/users/:id/followings', authenticated, userController.getFollowings)
+  app.get('/users/:id/likes', authenticated, userController.getLikes)
 }
