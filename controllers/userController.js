@@ -147,7 +147,7 @@ const userController = {
         isLiked: tweet.LikedUsers.some(d => d.id === req.user.id)
       }))
       return res.render('profile', {
-        user,
+        userData: user,
         LikedTweets,
         Followers,
         Followings,
@@ -208,9 +208,13 @@ const userController = {
         ],
         order: [['createdAt', 'DESC']]
       })
-      let userData = JSON.parse(JSON.stringify(user))
-      let followers = userData.Followers
+      //let userData = JSON.parse(JSON.stringify(user))
+      let followers = user.Followers
       followers = followers.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
+      followers = followers.map(follower => ({
+        ...follower.dataValues,
+        isFollowed: req.user.Followings.some(d => d.id === follower.id)
+      }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
@@ -218,7 +222,7 @@ const userController = {
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = req.user.Followings.some(d => d.id === user.id)
       return res.render('follower', {
-        user,
+        userData: user,
         followers,
         isOwner,
         isFollowed,
@@ -246,10 +250,14 @@ const userController = {
         ],
         order: [['createdAt', 'DESC']]
       })
-      let userData = JSON.parse(JSON.stringify(user))
+      //let userData = JSON.parse(JSON.stringify(user))
       // Sorting for the latest first
-      let followings = userData.Followings
+      let followings = user.Followings
       followings = followings.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
+      followings = followings.map(following => ({
+        ...following.dataValues,
+        isFollowed: req.user.Followings.some(d => d.id === following.id)
+      }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
@@ -257,7 +265,7 @@ const userController = {
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = req.user.Followings.some(d => d.id === user.id)
       return res.render('following', {
-        user,
+        userData: user,
         followings,
         isOwner,
         isFollowed,
@@ -280,16 +288,23 @@ const userController = {
       let user = await User.findByPk(req.params.id, {
         include: [
           { model: Tweet },
-          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: Tweet, as: 'LikedTweets', include: [User, { model: User, as: 'LikedUsers' }, Reply] },
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' },
         ],
         order: [['createdAt', 'DESC']]
       })
-      let userData = JSON.parse(JSON.stringify(user))
+      //let userData = JSON.parse(JSON.stringify(user))
       // Sorting for the latest first
-      let likedTweets = userData.LikedTweets
+      let likedTweets = user.LikedTweets
       likedTweets = likedTweets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      likedTweets = likedTweets.map(likedTweet => ({
+        ...likedTweet.dataValues,
+        isLiked: req.user.LikedTweets.some(d => d.id === likedTweet.id),
+        numOfLikes: likedTweet.LikedUsers ? likedTweet.LikedUsers.length : 0,
+        numOfReplies: likedTweet.Replies ? likedTweet.Replies.length : 0,
+        isOwner: likedTweet.User.id === req.user.id
+      }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
@@ -298,7 +313,7 @@ const userController = {
       const isFollowed = req.user.Followings.some(d => d.id === user.id)
       console.log('likedtweets---------', likedTweets)
       return res.render('like', {
-        user,
+        userData: user,
         likedTweets,
         isOwner,
         isFollowed,
