@@ -187,6 +187,29 @@ const userController = {
       req.flash('error_messages', '取消追蹤失敗，請稍後再嘗試!')
       return res.redirect('back')
     }
+  },
+
+  getFollowers: async (req, res) => {
+    try {
+      let isOwner = req.user.id === Number(req.params.id)
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Tweet },
+          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
+        ],
+        order: [['createdAt', 'DESC']]
+      })
+      let userData = JSON.parse(JSON.stringify(user))
+      const followers = userData.Followers
+      const isFollowed = req.user.Followings.some(d => d.id === user.id)
+      return res.render('follower', { user, followers, isOwner, isFollowed })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '請稍後再嘗試!')
+      return res.redirect('back')
+    }
   }
 }
 
