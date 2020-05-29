@@ -1,5 +1,5 @@
 <div class="row mt-5">
-  <div class="col-8">
+  <div class="col-md-8">
     <form class="post-tweet" action="/tweets" method="POST">
       <div class="mb-1">
 
@@ -24,10 +24,31 @@
           <div class="col-10 p-2">
             <a class="mb-1" href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
             <small>{{moment this.createdAt}}</small>
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between" style="overflow-wrap:anywhere">
               <p>{{this.description}}</p>
             </div>
-            <a href="/tweets/{{this.id}}/replies?userId={{this.User.id}}">Reply({{{this.ReplyCount}}})</a>
+            <div class="row align-items-center ml-0">
+              <a href="/tweets/{{this.id}}/replies">Reply({{{this.ReplyCount}}})</a>
+              {{#if this.isOwner}}
+                <button class="btn btn-link"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                  Like({{{this.numOfLikes}}})
+                </button>
+              {{else}}
+                {{#if this.isLiked}}
+                  <form action="/tweets/{{this.id}}/unlike" method="POST">
+                    <button class="btn btn-link"><i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                      Like({{{this.numOfLikes}}})
+                    </button>
+                  </form>
+                {{else}}
+                  <form action="/tweets/{{this.id}}/like" method="POST">
+                    <button class="btn btn-link"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                      Like({{{this.numOfLikes}}})
+                    </button>
+                  </form>
+                {{/if}}
+              {{/if}}
+            </div>
           </div>
         </div>
       {{/each}}
@@ -37,7 +58,7 @@
 
 
   </div>
-  <div class="col-4">
+  <div class="col-md-4">
     <h2>Popular Users</h2>
     <div class="mt-3 list-group container">
       {{#each top10PopularUsers}}

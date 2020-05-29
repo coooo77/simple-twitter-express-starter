@@ -10,38 +10,60 @@
     <p>Like {{numOfLikedTweets}}</p>
     <div class="row">
       {{#if isOwner}}
-      <a href="/users/{{user.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
+        <a href="/users/{{user.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
       {{else}}
-      {{#if isFollowed }}
-      <form action="/followings/{{user.id}}?_method=DELETE" method="POST" style="display: contents;">
-        <button type="submit" class="btn btn-lg btn-outline-danger mx-auto">Unfollow</button>
-      </form>
-      {{else}}
-      <form action="/followings/{{user.id}}" method="POST" style="display: contents;">
-        <button type="submit" class="btn btn-lg btn-outline-primary mx-auto">Follow</button>
-      </form>
-      {{/if}}
+        {{#if isFollowed }}
+          <form action="/followings/{{user.id}}?_method=DELETE" method="POST" style="display: contents;">
+            <button type="submit" class="btn btn-lg btn-outline-danger mx-auto">Unfollow</button>
+          </form>
+        {{else}}
+          <form action="/followings/{{user.id}}" method="POST" style="display: contents;">
+            <button type="submit" class="btn btn-lg btn-outline-primary mx-auto">Follow</button>
+          </form>
+        {{/if}}
       {{/if}}
     </div>
   </div>
   <div class="col-sm-9">
     <div class="mt-3 list-group">
       {{#each tweets}}
-      <div class="list-group-item list-group-item-action flex-column align-items-start position-relative mb-2">
+        <div class="list-group-item row d-flex mt-4 mb-5 mx-0 rounded">
+          <div class="col-2 px-0 mr-sm-0 mr-2 my-2" style="max-width: fit-content;">
+            <img src="{{../user.avatar}}" width="80" height="80" alt="">
+          </div>
+          <div class="col-9 col-lg-10 px-0 pl-sm-3">
 
-        <img class="float-left position-relative" style="left:-7px;" src="{{../user.avatar}}" width="80" height="80"
-          alt="">
-        <a class="mb-1" href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
-        <small>{{moment this.createdAt}}</small>
-        <div class="d-flex justify-content-between">
-          <p>{{this.description}}</p>
+            <a class="mb-1" href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
+            <small>{{moment this.createdAt}}</small>
+            <div class="d-flex justify-content-between" style="overflow-wrap:anywhere">
+              <p>{{this.description}}</p>
+            </div>
+            <div class="row align-items-center pl-3">
+              {{!-- secion Reply --}}
+              <a href="/tweets/{{this.id}}/replies">Reply({{{numOfReplies}}})</a>
+              {{!-- section Like --}}
+              {{#if ../isOwner}}
+                <button class="btn btn-link"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                  Like({{{this.numOfLikes}}})
+                </button>
+              {{else}}
+                {{#if this.isLiked}}
+                  <form action="/tweets/{{this.id}}/unlike" method="POST">
+                    <button class="btn btn-link"><i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                      Like({{{this.numOfLikes}}})
+                    </button>
+                  </form>
+                {{else}}
+                  <form action="/tweets/{{this.id}}/like" method="POST">
+                    <button class="btn btn-link"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                      Like({{{this.numOfLikes}}})
+                    </button>
+                  </form>
+                {{/if}}
+              {{/if}}
+            </div>
+          </div>
         </div>
-        {{!-- secion Reply --}}
-        <a href="/tweets/{{this.id}}/replies?userId={{this.User.id}}">Reply({{{numOfReplies}}})</a>
-        {{!-- section Like --}}
-        <a href="#" class="text-danger">Like({{{numOfLikes}}})</a>
-
-      </div>
       {{/each}}
     </div>
 
