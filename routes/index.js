@@ -48,6 +48,8 @@ module.exports = (app, passport) => {
     }),
     userController.signIn
   )
+  /****  Logout  ****/
+  app.get('/logout', userController.logout)
 
   /****  Followship  ****/
   app.post('/followings/:followingId', authenticated, userController.addFollowing)

@@ -49,6 +49,12 @@ const userController = {
     res.redirect('/tweets')
   },
 
+  logout: (req, res) => {
+    req.flash('success_messages', '登出成功！')
+    req.logout()
+    res.redirect('/signin')
+  },
+
   editUser: async (req, res) => {
     if (req.user.id === Number(req.params.id)) {
       const user = await User.findByPk(req.user.id)
@@ -103,11 +109,21 @@ const userController = {
       let user = await User.findByPk(req.params.id, {
         include: [
           { model: Tweet },
-          { model: Tweet, as: 'LikedTweets' },
+          { model: Tweet, as: 'LikedTweets', include: [User] },
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' },
-        ]
+        ],
+        order: [['createdAt', 'DESC']]
       })
+      let userData = JSON.parse(JSON.stringify(user))
+      // Sorting for the latest first
+      let LikedTweets = userData.LikedTweets
+      let Followers = userData.Followers
+      let Followings = userData.Followings
+      LikedTweets = LikedTweets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      Followers = Followers.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
+      Followings = Followings.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
+      // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
@@ -132,6 +148,9 @@ const userController = {
       }))
       return res.render('profile', {
         user,
+        LikedTweets,
+        Followers,
+        Followings,
         tweets: tweetsData,
         isOwner,
         isFollowed,
