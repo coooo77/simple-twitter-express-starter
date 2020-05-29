@@ -1,7 +1,8 @@
 const postTweet = document.querySelector('.post-tweet')
 postTweet.addEventListener('input', function (event) {
 
-  if (event.target.id === 'description') {
+  if (event.target.id === 'description' ||
+    event.target.id === 'comment') {
     let input = event.target.value
     let count = input.length
     const feedback = document.querySelector('.invalid-feedback')

@@ -27,6 +27,11 @@ module.exports = (app, passport) => {
   app.post('/tweets/:tweet_id/replies', authenticated, twitterController.postTweetReplies)
 
 
+  /**** Like ****/
+  app.post('/tweets/:tweet_id/like', authenticated, twitterController.addLike)
+  app.post('/tweets/:tweet_id/unlike', authenticated, twitterController.deleteLike)
+
+
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
   app.get('/admin/tweets', authenticated, authenticatedAdmin, adminController.getTweets)
   app.post('/admin/tweets/:id', authenticated, authenticatedAdmin, adminController.deleteTweets)

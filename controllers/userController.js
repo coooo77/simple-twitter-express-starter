@@ -143,7 +143,8 @@ const userController = {
       tweetsData = tweetsData.map(tweet => ({
         ...tweet,
         numOfReplies: tweet.Replies ? tweet.Replies.length : 0,
-        numOfLikes: tweet.LikedUsers ? tweet.LikedUsers.length : 0
+        numOfLikes: tweet.LikedUsers ? tweet.LikedUsers.length : 0,
+        isLiked: tweet.LikedUsers.some(d => d.id === req.user.id)
       }))
       return res.render('profile', {
         user,
