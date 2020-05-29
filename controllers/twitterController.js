@@ -108,6 +108,19 @@ const twitterController = {
       req.flash('error_messages', '無法送出Reply，請稍後再嘗試!')
       return res.redirect('back')
     }
+  },
+  addLike: async (req, res) => {
+    try {
+      await Like.create({
+        UserId: req.user.id,
+        TweetId: req.params.tweet_id
+      })
+      return res.redirect('back')
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '無法送出Like，請稍後再嘗試!')
+      return res.redirect('back')
+    }
   }
 }
 
