@@ -1,16 +1,17 @@
+<br />
+
 <h1 class="mb-0">Twitter後台</h1>
-<div class="mb-3">
-  <a href="/admin/tweets">Tweeks</a> |
+<div class="mb-0">
+  <a href="/admin/tweets">Tweets</a> |
   <a href="/admin/users">Users</a>
 </div>
 
 <br />
-<br />
 
-<table class="table">
+<table class="table text-center border border-info">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">#</th>
+      <th scope="col">#Tweet Id</th>
       <th scope="col">User</th>
       <th scope="col">Content</th>
       <th scope="col">Action</th>
@@ -18,19 +19,43 @@
   </thead>
   <tbody>
     {{#each tweet}}
-      <tr>
-        <th scope="row">{{this.id}}</th>
-        <td>{{this.User.name}}</td>
-        <td>
-          <p>{{this.description}}
-          </p>
+      <tr class="table-secondary">
+        <th scope="row" class=" pb-0">{{this.id}}</th>
+        <td class=" pb-0"><a href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a></td>
+        <td class=" pb-0">
+          <a href="/tweets/{{this.id}}/replies?userId={{this.User.id}}">{{this.description}} ... </a>
         </td>
-        <td>
+        <td class=" pb-0">
           <form action="/admin/tweets/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
-            <button type="submit" class="btn btn-link">Delete</button>
+            <button type="submit" class="btn btn-link mb-2" style="line-height:70%">Delete</button>
           </form>
         </td>
       </tr>
     {{/each}}
   </tbody>
 </table>
+
+<br />
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="/admin/tweets?page={{prev}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {{#each totalPage}}
+      {{#ifCond this ../page}}
+        <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+    {{else}}
+      <li class="page-item"><a class="page-link" href="/admin/tweets?page={{this}}">{{this}}</a></li>
+      {{/ifCond}}
+    {{/each}}
+    <a class="page-link" href="/admin/tweets?page={{next}}" aria-label="Next">
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+    </li>
+  </ul>
+</nav>
+
+<br />

@@ -5,16 +5,34 @@ const Tweet = db.Tweet
 const adminController = {
   getTweets: async (req, res) => {
     try {
-      const tweets = await Tweet.findAll({
-        raw: true,
-        nest: true,
-        include: [User]
+      const pageLimit = 10
+      let offset = 0
+      if (req.query.page) {
+        offset = (req.query.page - 1) * pageLimit
+      }
+      const tweets = await Tweet.findAndCountAll({
+        include: [User],
+        offset: offset,
+        limit: pageLimit
       })
-      const data = tweets.map(tweet => ({
-        ...tweet,
-        description: tweet.description.substring(0, 50)
+      const data = tweets.rows.map(tweet => ({
+        ...tweet.dataValues,
+        description: tweet.dataValues.description.substring(0, 50)
       }))
-      return res.render('admin/tweets', { tweet: data })
+
+      let page = Number(req.query.page) || 1
+      let pages = Math.ceil(tweets.count / pageLimit)
+      let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
+      let prev = page - 1 < 1 ? 1 : page - 1
+      let next = page + 1 > pages ? pages : page + 1
+
+      return res.render('admin/tweets', {
+        tweet: JSON.parse(JSON.stringify(data)),
+        page,
+        totalPage,
+        prev,
+        next
+      })
     } catch (error) {
       console.error(error)
       req.flash('error_messages', '無法讀取後台Tweeks，請稍後再嘗試!')
