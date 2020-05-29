@@ -6,22 +6,28 @@ const Like = db.Like
 
 const twitterController = {
   getTweets: async (req, res) => {
-    try {
-      let tweets = await Tweet.findAll({
-        include: [User, Reply, Like],
-        order: [['createdAt', 'DESC']]
-      })
-      tweets = tweets.map(tweet => ({
-        ...tweet.dataValues,
-        ReplyCount: tweet.Replies.length
-      })
-      )
-      return res.render('tweets', { tweets })
-    } catch (error) {
-      console.error(error)
-      req.flash('error_messages', '無法瀏覽Tweeks，請稍後再嘗試!')
-      return res.redirect('back')
-    }
+    let tweets = await Tweet.findAll({
+      include: [User, Reply, Like],
+      order: [['createdAt', 'DESC']]
+    })
+    tweets = tweets.map(tweet => ({
+      ...tweet.dataValues,
+      ReplyCount: tweet.Replies.length
+    }))
+
+    let users = await User.findAll({
+      include: [{ model: User, as: 'Followers' }]
+    })
+    users = users.map(user => ({
+      ...user.dataValues,
+      FollowersCount: user.Followers ? user.Followers.length : 0,
+      introduction: user.introduction.substring(0, 50)
+    }))
+    users = users.sort((a, b) => b.FollowersCount - a.FollowersCount)
+    const userData = users.splice(0, 10)
+    let top10PopularUsers = JSON.parse(JSON.stringify(userData))
+    console.log('top10PopularUsers', top10PopularUsers[0])
+    return res.render('tweets', { tweets, top10PopularUsers })
   },
   postTweets: async (req, res) => {
     if (!req.body.description) {
