@@ -68,7 +68,6 @@ const twitterController = {
   getTweetReplies: async (req, res) => {
 
     try {
-
       const tweet = await Tweet.findByPk(req.params.tweet_id, {
         include: [
           { model: Reply, include: [User] },
@@ -78,7 +77,8 @@ const twitterController = {
               { model: Tweet, as: 'LikedTweets' },
               { model: User, as: 'Followers' },
               { model: User, as: 'Followings' },]
-          }
+          },
+          Like
         ]
       })
 
@@ -92,7 +92,7 @@ const twitterController = {
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
-      const isLiked = helpers.getUser(req).LikedTweets.some(d => d.id === Number(req.params.tweet_id))
+      const isLiked = tweet.Likes.some(d => d.UserId === helpers.getUser(req).id)
 
       return res.render('tweet', {
         tweet,
@@ -114,13 +114,13 @@ const twitterController = {
     }
   },
   postTweetReplies: async (req, res) => {
-    if (!req.body.comment || !req.body.userId) {
-      return res.redirect('back')
-    }
+    // if (!req.body.comment || !req.body.userId) {      
+    //   return res.redirect('back')
+    // }
     try {
       const reply = await Reply.create({
         TweetId: req.params.tweet_id,
-        UserId: req.body.userId,
+        UserId: helpers.getUser(req).id,
         comment: req.body.comment
       })
       return res.redirect(`/tweets/${req.params.tweet_id}/replies`)
