@@ -3,16 +3,30 @@ const Tweet = db.Tweet
 const User = db.User
 const Reply = db.Reply
 const Like = db.Like
+const pageLimit = 10
 
 const twitterController = {
   getTweets: async (req, res) => {
-    let tweets = await Tweet.findAll({
+    let offset = 0
+    if (req.query.page) {
+      offset = (req.query.page - 1) * pageLimit
+    }
+    let tweets = await Tweet.findAndCountAll({
       include: [User, Reply, Like],
-      order: [['createdAt', 'DESC']]
+      distinct: true,
+      order: [['createdAt', 'DESC']],
+      limit: pageLimit,
+      offset: offset
     })
-    tweets = tweets.map(tweet => ({
+
+    let page = Number(req.query.page) || 1
+    let pages = Math.ceil(tweets.count / pageLimit)
+    let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
+    let prev = page - 1 < 1 ? 1 : page - 1
+    let next = page + 1 > pages ? pages : page + 1
+    tweets = tweets.rows.map(tweet => ({
       ...tweet.dataValues,
-      ReplyCount: tweet.Replies.length,
+      numOfReplies: tweet.Replies.length,
       numOfLikes: tweet.Likes ? tweet.Likes.length : 0,
       isLiked: req.user.LikedTweets.some(d => d.id === tweet.id),
       isOwner: tweet.User.id === req.user.id
@@ -31,7 +45,7 @@ const twitterController = {
     users = users.sort((a, b) => b.FollowersCount - a.FollowersCount)
     const userData = users.splice(0, 10)
     let top10PopularUsers = JSON.parse(JSON.stringify(userData))
-    return res.render('tweets', { tweets, top10PopularUsers })
+    return res.render('tweets', { tweets, top10PopularUsers, page, totalPage, prev, next })
   },
   postTweets: async (req, res) => {
     if (!req.body.description) {
