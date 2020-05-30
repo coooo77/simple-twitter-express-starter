@@ -33,7 +33,7 @@ module.exports = {
       name: `user${id}`,
       avatar: 'https://loremflickr.com/320/240/man,girl/?random=${Math.random() * 100}',
       introduction: faker.lorem.text(),
-      role: id % 4 === 0 ? 'Admin' : 'User',
+      role: id % 4 === 0 ? 'admin' : 'user',
       createdAt: new Date(),
       updatedAt: new Date()
     })))

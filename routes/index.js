@@ -14,7 +14,7 @@ module.exports = (app, passport) => {
   }
   const authenticatedAdmin = (req, res, next) => {
     if (helpers.ensureAuthenticated(req)) {
-      if (req.user.role === 'Admin') { return next() }
+      if (helpers.getUser(req).role === 'admin') { return next() }
       return res.redirect('/')
     }
     res.redirect('/signin')
@@ -33,9 +33,9 @@ module.exports = (app, passport) => {
 
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
-  app.get('/admin/tweets', authenticated, authenticatedAdmin, adminController.getTweets)
-  app.post('/admin/tweets/:id', authenticated, authenticatedAdmin, adminController.deleteTweets)
-  app.get('/admin/users', authenticated, authenticatedAdmin, adminController.getUsers)
+  app.get('/admin/tweets', authenticatedAdmin, adminController.getTweets)
+  app.delete('/admin/tweets/:id', authenticatedAdmin, adminController.deleteTweets)
+  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
 
 
   /****  Register  ****/
