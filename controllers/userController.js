@@ -147,7 +147,7 @@ const userController = {
         isLiked: tweet.LikedUsers.some(d => d.id === req.user.id)
       }))
       return res.render('profile', {
-        user,
+        userData: user,
         LikedTweets,
         Followers,
         Followings,
@@ -192,6 +192,139 @@ const userController = {
     } catch (error) {
       console.error(error)
       req.flash('error_messages', '取消追蹤失敗，請稍後再嘗試!')
+      return res.redirect('back')
+    }
+  },
+
+  getFollowers: async (req, res) => {
+    try {
+      let isOwner = req.user.id === Number(req.params.id)
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Tweet },
+          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
+        ],
+        order: [['createdAt', 'DESC']]
+      })
+      //let userData = JSON.parse(JSON.stringify(user))
+      let followers = user.Followers
+      followers = followers.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
+      followers = followers.map(follower => ({
+        ...follower.dataValues,
+        isFollowed: req.user.Followings.some(d => d.id === follower.id)
+      }))
+      // Number info use in handlebars
+      const numOfTweeks = user.Tweets ? user.Tweets.length : 0
+      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfFollowers = user.Followers ? user.Followers.length : 0
+      const numOfFollowings = user.Followings ? user.Followings.length : 0
+      const isFollowed = req.user.Followings.some(d => d.id === user.id)
+      return res.render('follower', {
+        userData: user,
+        followers,
+        isOwner,
+        isFollowed,
+        numOfTweeks,
+        numOfLikedTweets,
+        numOfFollowers,
+        numOfFollowings
+      })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '請稍後再嘗試!')
+      return res.redirect('back')
+    }
+  },
+  getFollowings: async (req, res) => {
+    try {
+      // User personal info
+      let isOwner = req.user.id === Number(req.params.id)
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Tweet },
+          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
+        ],
+        order: [['createdAt', 'DESC']]
+      })
+      //let userData = JSON.parse(JSON.stringify(user))
+      // Sorting for the latest first
+      let followings = user.Followings
+      followings = followings.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
+      followings = followings.map(following => ({
+        ...following.dataValues,
+        isFollowed: req.user.Followings.some(d => d.id === following.id)
+      }))
+      // Number info use in handlebars
+      const numOfTweeks = user.Tweets ? user.Tweets.length : 0
+      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfFollowers = user.Followers ? user.Followers.length : 0
+      const numOfFollowings = user.Followings ? user.Followings.length : 0
+      const isFollowed = req.user.Followings.some(d => d.id === user.id)
+      return res.render('following', {
+        userData: user,
+        followings,
+        isOwner,
+        isFollowed,
+        numOfTweeks,
+        numOfLikedTweets,
+        numOfFollowers,
+        numOfFollowings
+      })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '請稍後再嘗試!')
+      return res.redirect('back')
+    }
+  },
+
+  getLikes: async (req, res) => {
+    try {
+      // User personal info
+      let isOwner = req.user.id === Number(req.params.id)
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          { model: Tweet },
+          { model: Tweet, as: 'LikedTweets', include: [User, { model: User, as: 'LikedUsers' }, Reply] },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
+        ],
+        order: [['createdAt', 'DESC']]
+      })
+      //let userData = JSON.parse(JSON.stringify(user))
+      // Sorting for the latest first
+      let likedTweets = user.LikedTweets
+      likedTweets = likedTweets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      likedTweets = likedTweets.map(likedTweet => ({
+        ...likedTweet.dataValues,
+        isLiked: req.user.LikedTweets.some(d => d.id === likedTweet.id),
+        numOfLikes: likedTweet.LikedUsers ? likedTweet.LikedUsers.length : 0,
+        numOfReplies: likedTweet.Replies ? likedTweet.Replies.length : 0,
+        isOwner: likedTweet.User.id === req.user.id
+      }))
+      // Number info use in handlebars
+      const numOfTweeks = user.Tweets ? user.Tweets.length : 0
+      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfFollowers = user.Followers ? user.Followers.length : 0
+      const numOfFollowings = user.Followings ? user.Followings.length : 0
+      const isFollowed = req.user.Followings.some(d => d.id === user.id)
+      console.log('likedtweets---------', likedTweets)
+      return res.render('like', {
+        userData: user,
+        likedTweets,
+        isOwner,
+        isFollowed,
+        numOfTweeks,
+        numOfLikedTweets,
+        numOfFollowers,
+        numOfFollowings
+      })
+    } catch (error) {
+      console.error(error)
+      req.flash('error_messages', '請稍後再嘗試!')
       return res.redirect('back')
     }
   }
