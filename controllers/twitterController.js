@@ -4,6 +4,7 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const pageLimit = 10
+const helpers = require('../_helpers')
 
 const twitterController = {
   getTweets: async (req, res) => {
@@ -28,8 +29,8 @@ const twitterController = {
       ...tweet.dataValues,
       numOfReplies: tweet.Replies.length,
       numOfLikes: tweet.Likes ? tweet.Likes.length : 0,
-      isLiked: req.user.LikedTweets.some(d => d.id === tweet.id),
-      isOwner: tweet.User.id === req.user.id
+      isLiked: helpers.getUser(req).LikedTweets.some(d => d.id === tweet.id),
+      isOwner: tweet.User.id === helpers.getUser(req).id
     }))
 
     let users = await User.findAll({
@@ -39,8 +40,8 @@ const twitterController = {
       ...user.dataValues,
       FollowersCount: user.Followers ? user.Followers.length : 0,
       introduction: user.introduction.substring(0, 50),
-      isFollowed: req.user.Followings.some(following => following.id === user.id),
-      isOwner: req.user.id === user.id,
+      isFollowed: helpers.getUser(req).Followings.some(following => following.id === user.id),
+      isOwner: helpers.getUser(req).id === user.id,
     }))
     users = users.sort((a, b) => b.FollowersCount - a.FollowersCount)
     const userData = users.splice(0, 10)
@@ -55,7 +56,7 @@ const twitterController = {
     try {
       await Tweet.create({
         description: req.body.description,
-        UserId: req.user.id
+        UserId: helpers.getUser(req).id
       })
       return res.redirect('/tweets')
     } catch (error) {
@@ -67,7 +68,6 @@ const twitterController = {
   getTweetReplies: async (req, res) => {
 
     try {
-
       const tweet = await Tweet.findByPk(req.params.tweet_id, {
         include: [
           { model: Reply, include: [User] },
@@ -77,7 +77,8 @@ const twitterController = {
               { model: Tweet, as: 'LikedTweets' },
               { model: User, as: 'Followers' },
               { model: User, as: 'Followings' },]
-          }
+          },
+          Like
         ]
       })
 
@@ -85,13 +86,13 @@ const twitterController = {
       const numOfLikes = tweet.LikedUsers ? tweet.LikedUsers.length : 0
 
       const user = tweet.User
-      const isOwner = req.user.id === user.id
+      const isOwner = helpers.getUser(req).id === user.id
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
-      const isFollowed = req.user.Followings.some(d => d.id === user.id)
-      const isLiked = req.user.LikedTweets.some(d => d.id === Number(req.params.tweet_id))
+      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
+      const isLiked = tweet.Likes.some(d => d.UserId === helpers.getUser(req).id)
 
       return res.render('tweet', {
         tweet,
@@ -113,13 +114,13 @@ const twitterController = {
     }
   },
   postTweetReplies: async (req, res) => {
-    if (!req.body.comment || !req.body.userId) {
-      return res.redirect('back')
-    }
+    // if (!req.body.comment || !req.body.userId) {      
+    //   return res.redirect('back')
+    // }
     try {
       const reply = await Reply.create({
         TweetId: req.params.tweet_id,
-        UserId: req.body.userId,
+        UserId: helpers.getUser(req).id,
         comment: req.body.comment
       })
       return res.redirect(`/tweets/${req.params.tweet_id}/replies`)
@@ -132,7 +133,7 @@ const twitterController = {
   addLike: async (req, res) => {
     try {
       await Like.create({
-        UserId: req.user.id,
+        UserId: helpers.getUser(req).id,
         TweetId: req.params.tweet_id
       })
       return res.redirect('back')
@@ -146,7 +147,7 @@ const twitterController = {
     try {
       const like = await Like.findOne({
         where: {
-          UserId: req.user.id,
+          UserId: helpers.getUser(req).id,
           TweetId: req.params.tweet_id
         }
       })

@@ -10,7 +10,7 @@ module.exports = {
       name: 'root',
       avatar: 'https://loremflickr.com/320/240/man,girl/?random=${Math.random() * 100}',
       introduction: faker.lorem.text(),
-      role: 'Admin',
+      role: 'admin',
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -19,7 +19,7 @@ module.exports = {
       name: 'user1',
       avatar: 'https://loremflickr.com/320/240/man,girl/?random=${Math.random() * 100}',
       introduction: faker.lorem.text(),
-      role: 'User',
+      role: 'user',
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -28,7 +28,7 @@ module.exports = {
       name: 'user2',
       avatar: 'https://loremflickr.com/320/240/man,girl/?random=${Math.random() * 100}',
       introduction: faker.lorem.text(),
-      role: 'User',
+      role: 'user',
       createdAt: new Date(),
       updatedAt: new Date()
     }], {});

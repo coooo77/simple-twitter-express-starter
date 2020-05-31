@@ -42,7 +42,7 @@ const adminController = {
   deleteTweets: async (req, res) => {
     try {
       let tweet = await Tweet.findByPk(req.params.id)
-      tweet.destroy()
+      await tweet.destroy()
       tweet = await Tweet.findByPk(req.param.id)
       if (tweet) {
         throw new Error()

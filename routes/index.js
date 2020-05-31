@@ -1,20 +1,20 @@
 const twitterController = require('../controllers/twitterController')
 const adminController = require('../controllers/adminController')
 const userController = require('../controllers/userController')
-
+const helpers = require('../_helpers')
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (helpers.ensureAuthenticated(req)) {
       return next()
     }
     res.redirect('/signin')
   }
   const authenticatedAdmin = (req, res, next) => {
-    if (req.isAuthenticated()) {
-      if (req.user.role === 'Admin') { return next() }
+    if (helpers.ensureAuthenticated(req)) {
+      if (helpers.getUser(req).role === 'admin') { return next() }
       return res.redirect('/')
     }
     res.redirect('/signin')
@@ -33,9 +33,9 @@ module.exports = (app, passport) => {
 
 
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
-  app.get('/admin/tweets', authenticated, authenticatedAdmin, adminController.getTweets)
-  app.post('/admin/tweets/:id', authenticated, authenticatedAdmin, adminController.deleteTweets)
-  app.get('/admin/users', authenticated, authenticatedAdmin, adminController.getUsers)
+  app.get('/admin/tweets', authenticatedAdmin, adminController.getTweets)
+  app.delete('/admin/tweets/:id', authenticatedAdmin, adminController.deleteTweets)
+  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
 
 
   /****  Register  ****/
