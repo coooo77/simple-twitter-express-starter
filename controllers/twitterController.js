@@ -1,10 +1,11 @@
 const db = require('../models')
+const helpers = require('../_helpers');
 const Tweet = db.Tweet
 const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const pageLimit = 10
-const helpers = require('../_helpers')
+
 
 const twitterController = {
   getTweets: async (req, res) => {
@@ -30,8 +31,8 @@ const twitterController = {
       ...tweet,
       numOfReplies: tweet.Replies ? tweet.Replies.length : 0,
       numOfLikes: tweet.Likes ? tweet.Likes.length : 0,
-      isLiked: tweet.Likes ? tweet.Likes.some(like => like.UserId === helpers.getUser(req).id) : false,
-      isOwner: tweet.UserId === helpers.getUser(req).id
+      isLiked: helpers.getUser(req).LikedTweets ? helpers.getUser(req).LikedTweets.some(d => d.id === tweet.id) : false,
+      isOwner: tweet.User.id === helpers.getUser(req).id
     }))
 
     let users = await User.findAll({
@@ -40,8 +41,8 @@ const twitterController = {
     users = users.map(user => ({
       ...user.dataValues,
       FollowersCount: user.Followers ? user.Followers.length : 0,
-      introduction: user.introduction.substring(0, 50),
-      isFollowed: helpers.getUser(req).Followings.some(following => following.id === user.id),
+      introduction: user.introduction ? user.introduction.substring(0, 50) : '',
+      isFollowed: helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(following => following.id === user.id) : false,
       isOwner: helpers.getUser(req).id === user.id,
     }))
     users = users.sort((a, b) => b.FollowersCount - a.FollowersCount)
@@ -52,6 +53,9 @@ const twitterController = {
   postTweets: async (req, res) => {
     if (!req.body.description) {
       req.flash('error_messages', "description didn't exist")
+      return res.redirect('back')
+    } else if (req.body.description.length > 140) {
+      req.flash('error_messages', "description can't be longer than 140 words")
       return res.redirect('back')
     }
     try {
@@ -87,18 +91,18 @@ const twitterController = {
       const replies = tweet.Replies
       const numOfLikes = tweet.LikedUsers ? tweet.LikedUsers.length : 0
 
-      const user = tweet.User
-      const isOwner = helpers.getUser(req).id === user.id
-      const numOfTweeks = user.Tweets ? user.Tweets.length : 0
-      const numOfLikedTweets = user.dataValues.Likes ? user.dataValues.Likes.length : 0
-      const numOfFollowers = user.Followers ? user.Followers.length : 0
-      const numOfFollowings = user.Followings ? user.Followings.length : 0
-      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
-      const isLiked = tweet.Likes.some(d => d.UserId === helpers.getUser(req).id)
+      const tweetOwner = tweet.User
+      const isOwner = helpers.getUser(req).id === tweetOwner.id
+      const numOfTweeks = tweetOwner.Tweets ? tweetOwner.Tweets.length : 0
+      const numOfLikedTweets = tweetOwner.LikedTweets ? tweetOwner.LikedTweets.length : 0
+      const numOfFollowers = tweetOwner.Followers ? tweetOwner.Followers.length : 0
+      const numOfFollowings = tweetOwner.Followings ? tweetOwner.Followings.length : 0
+      const isFollowed = helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === tweetOwner.id) : false
+      const isLiked = tweet.Likes ? tweet.Likes.some(d => d.UserId === helpers.getUser(req).id) : false
 
       return res.render('tweet', {
         tweet,
-        tweetOwner: user,
+        tweetOwner,
         numOfLikes,
         isOwner,
         replies,

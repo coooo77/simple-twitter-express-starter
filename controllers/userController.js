@@ -2,13 +2,14 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const bcrypt = require('bcryptjs')
 const db = require('../models')
+const helpers = require('../_helpers');
 const User = db.User
 const Tweet = db.Tweet
 const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
 const Sequelize = require('sequelize');
-const helpers = require('../_helpers')
+
 
 const userController = {
 
@@ -129,7 +130,7 @@ const userController = {
       const numOfLikedTweets = user.Likes ? user.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
-      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
+      const isFollowed = helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === user.id) : false
       // User tweets info
       let tweets = await Tweet.findAll({
         where: { UserId: req.params.id },
@@ -145,7 +146,7 @@ const userController = {
         ...tweet,
         numOfReplies: tweet.Replies ? tweet.Replies.length : 0,
         numOfLikes: tweet.LikedUsers ? tweet.LikedUsers.length : 0,
-        isLiked: tweet.LikedUsers.some(d => d.id === helpers.getUser(req).id)
+        isLiked: tweet.LikedUsers ? tweet.LikedUsers.some(d => d.id === helpers.getUser(req).id) : false
       }))
       return res.render('profile', {
         userData: user,
@@ -168,10 +169,14 @@ const userController = {
   },
 
   addFollowing: async (req, res) => {
+    if (Number(req.body.id) === helpers.getUser(req).id) {
+      req.flash('error_messages', '不可追蹤本身用戶!')
+      return res.redirect('back')
+    }
     try {
       await Followship.create({
         followerId: helpers.getUser(req).id,
-        followingId: req.params.followingId
+        followingId: req.body.id
       })
       return res.redirect('back')
     } catch (error) {
@@ -214,14 +219,14 @@ const userController = {
       followers = followers.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
       followers = followers.map(follower => ({
         ...follower.dataValues,
-        isFollowed: helpers.getUser(req).Followings.some(d => d.id === follower.id)
+        isFollowed: helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === follower.id) : false
       }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.Likes ? user.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
-      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
+      const isFollowed = helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === user.id) : false
       return res.render('follower', {
         userData: user,
         followers,
@@ -257,14 +262,14 @@ const userController = {
       followings = followings.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
       followings = followings.map(following => ({
         ...following.dataValues,
-        isFollowed: helpers.getUser(req).Followings.some(d => d.id === following.id)
+        isFollowed: helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === following.id) : false
       }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
       const numOfLikedTweets = user.Likes ? user.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
-      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
+      const isFollowed = helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === user.id) : false
       return res.render('following', {
         userData: user,
         followings,
@@ -301,7 +306,7 @@ const userController = {
       likedTweets = likedTweets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       likedTweets = likedTweets.map(likedTweet => ({
         ...likedTweet.dataValues,
-        isLiked: helpers.getUser(req).LikedTweets.some(d => d.id === likedTweet.id),
+        isLiked: helpers.getUser(req).LikedTweets ? helpers.getUser(req).LikedTweets.some(d => d.id === likedTweet.id) : false,
         numOfLikes: likedTweet.LikedUsers ? likedTweet.LikedUsers.length : 0,
         numOfReplies: likedTweet.Replies ? likedTweet.Replies.length : 0,
         isOwner: likedTweet.User.id === helpers.getUser(req).id
@@ -311,7 +316,7 @@ const userController = {
       const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
-      const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
+      const isFollowed = helpers.getUser(req).Followings ? helpers.getUser(req).Followings.some(d => d.id === user.id) : false
 
       return res.render('like', {
         userData: user,

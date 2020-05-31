@@ -14,7 +14,7 @@ module.exports = (app, passport) => {
   }
   const authenticatedAdmin = (req, res, next) => {
     if (helpers.ensureAuthenticated(req)) {
-      if (helpers.getUser(req).role === 'admin') { return next() }
+      if (helpers.getUser(req).role === 'Admin') { return next() }
       return res.redirect('/')
     }
     res.redirect('/signin')
@@ -55,12 +55,12 @@ module.exports = (app, passport) => {
   app.get('/logout', userController.logout)
 
   /****  Followship  ****/
-  app.post('/followings/:followingId', authenticated, userController.addFollowing)
-  app.delete('/followings/:followingId', authenticated, userController.removeFollowing)
+  app.post('/followships', authenticated, userController.addFollowing)
+  app.delete('/followships/:followingId', authenticated, userController.removeFollowing)
 
   /****  User  ****/
   app.get('/users/:id/edit', authenticated, userController.editUser)
-  app.put('/users/:id/edit', authenticated, upload.single('image'), userController.putUser)
+  app.post('/users/:id/edit', authenticated, upload.single('image'), userController.putUser)
   app.get('/users/:id/tweets', authenticated, userController.getUser)
   app.get('/users/:id/followers', authenticated, userController.getFollowers)
   app.get('/users/:id/followings', authenticated, userController.getFollowings)
