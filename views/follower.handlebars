@@ -15,11 +15,12 @@
         <a href="/users/{{userData.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
       {{else}}
         {{#if isFollowed }}
-          <form action="/followings/{{userData.id}}?_method=DELETE" method="POST" style="display: contents;">
+          <form action="/followships/{{userData.id}}?_method=DELETE" method="POST" style="display: contents;">
             <button type="submit" class="btn btn-lg btn-outline-danger mx-auto">Unfollow</button>
           </form>
         {{else}}
-          <form action="/followings/{{userData.id}}" method="POST" style="display: contents;">
+          <form action="/followships" method="POST" style="display: contents;">
+            <input type="hidden" name="id" value="{{userData.id}}">
             <button type="submit" class="btn btn-lg btn-outline-primary mx-auto">Follow</button>
           </form>
         {{/if}}
@@ -44,11 +45,12 @@
                 <a href="/users/{{../userData.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
         {{else}}
           {{#if this.isFollowed }}
-            <form action="/followings/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
+            <form action="/followships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
               <button type="submit" class="btn btn-lg btn-outline-danger mx-auto">Unfollow</button>
             </form>
           {{else}}
-            <form action="/followings/{{this.id}}" method="POST" style="display: contents;">
+            <form action="/followships" method="POST" style="display: contents;">
+              <input type="hidden" name="id" value="{{this.id}}">
               <button type="submit" class="btn btn-lg btn-outline-primary mx-auto">Follow</button>
             </form>
           {{/if}}
