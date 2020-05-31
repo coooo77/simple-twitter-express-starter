@@ -76,11 +76,12 @@
                 <a href="/users/{{this.id}}/edit" class="btn btn-sm btn-outline-primary ">Edit Profile</a>
               {{else}}
                 {{#if this.isFollowed }}
-                  <form action="/followings/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
+                  <form action="/followships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
                     <button type="submit" class="btn btn-sm btn-outline-danger ">Unfollow</button>
                   </form>
                 {{else}}
-                  <form action="/followings/{{this.id}}" method="POST" style="display: contents;">
+                  <form action="/followships" method="POST" style="display: contents;">
+                    <input type="hidden" name="id" value="{{this.id}}">
                     <button type="submit" class="btn btn-sm btn-outline-primary ">Follow</button>
                   </form>
                 {{/if}}
