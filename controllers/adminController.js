@@ -1,7 +1,7 @@
 const db = require('../models')
 const User = db.User
 const Tweet = db.Tweet
-
+const Like = db.Like
 const adminController = {
   getTweets: async (req, res) => {
     try {
@@ -60,16 +60,18 @@ const adminController = {
       let users = await User.findAll({
         include: [
           Tweet,
-          { model: Tweet, as: 'LikedTweets' },
+          Like,
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' }
-        ]
+        ],
+        distinct: true
       })
+
       let userData = JSON.parse(JSON.stringify(users))
       userData = userData.map(user => ({
         ...user,
         numOfTweeks: user.Tweets ? user.Tweets.length : 0,
-        numOfLikedTweets: user.LikedTweets ? user.LikedTweets.length : 0,
+        numOfLikedTweets: user.Likes ? user.Likes.length : 0,
         numOfFollowers: user.Followers ? user.Followers.length : 0,
         numOfFollowings: user.Followings ? user.Followings.length : 0
       }))

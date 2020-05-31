@@ -20,17 +20,18 @@ const twitterController = {
       offset: offset
     })
 
+    tweets = JSON.parse(JSON.stringify(tweets))
     let page = Number(req.query.page) || 1
     let pages = Math.ceil(tweets.count / pageLimit)
     let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
     let prev = page - 1 < 1 ? 1 : page - 1
     let next = page + 1 > pages ? pages : page + 1
     tweets = tweets.rows.map(tweet => ({
-      ...tweet.dataValues,
-      numOfReplies: tweet.Replies.length,
+      ...tweet,
+      numOfReplies: tweet.Replies ? tweet.Replies.length : 0,
       numOfLikes: tweet.Likes ? tweet.Likes.length : 0,
-      isLiked: helpers.getUser(req).LikedTweets.some(d => d.id === tweet.id),
-      isOwner: tweet.User.id === helpers.getUser(req).id
+      isLiked: tweet.Likes ? tweet.Likes.some(like => like.UserId === helpers.getUser(req).id) : false,
+      isOwner: tweet.UserId === helpers.getUser(req).id
     }))
 
     let users = await User.findAll({
@@ -74,9 +75,10 @@ const twitterController = {
           { model: User, as: 'LikedUsers' },
           {
             model: User, include: [Tweet,
-              { model: Tweet, as: 'LikedTweets' },
               { model: User, as: 'Followers' },
-              { model: User, as: 'Followings' },]
+              { model: User, as: 'Followings' },
+              Like
+            ]
           },
           Like
         ]
@@ -88,7 +90,7 @@ const twitterController = {
       const user = tweet.User
       const isOwner = helpers.getUser(req).id === user.id
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
-      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfLikedTweets = user.dataValues.Likes ? user.dataValues.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)

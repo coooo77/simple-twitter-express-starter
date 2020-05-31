@@ -110,7 +110,7 @@ const userController = {
       let user = await User.findByPk(req.params.id, {
         include: [
           { model: Tweet },
-          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: Like, include: [Tweet] },
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' },
         ],
@@ -118,7 +118,7 @@ const userController = {
       })
       let userData = JSON.parse(JSON.stringify(user))
       // Sorting for the latest first
-      let LikedTweets = userData.LikedTweets
+      let LikedTweets = userData.Likes.map(like => like.Tweet)
       let Followers = userData.Followers
       let Followings = userData.Followings
       LikedTweets = LikedTweets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -126,7 +126,7 @@ const userController = {
       Followings = Followings.sort((a, b) => new Date(b.Followship.createdAt) - new Date(a.Followship.createdAt))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
-      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfLikedTweets = user.Likes ? user.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
@@ -203,7 +203,7 @@ const userController = {
       let user = await User.findByPk(req.params.id, {
         include: [
           { model: Tweet },
-          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: Like },
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' },
         ],
@@ -218,7 +218,7 @@ const userController = {
       }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
-      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfLikedTweets = user.Likes ? user.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
@@ -245,7 +245,7 @@ const userController = {
       let user = await User.findByPk(req.params.id, {
         include: [
           { model: Tweet },
-          { model: Tweet, as: 'LikedTweets', include: [User] },
+          { model: Like },
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' },
         ],
@@ -261,7 +261,7 @@ const userController = {
       }))
       // Number info use in handlebars
       const numOfTweeks = user.Tweets ? user.Tweets.length : 0
-      const numOfLikedTweets = user.LikedTweets ? user.LikedTweets.length : 0
+      const numOfLikedTweets = user.Likes ? user.Likes.length : 0
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
@@ -312,7 +312,7 @@ const userController = {
       const numOfFollowers = user.Followers ? user.Followers.length : 0
       const numOfFollowings = user.Followings ? user.Followings.length : 0
       const isFollowed = helpers.getUser(req).Followings.some(d => d.id === user.id)
-      console.log('likedtweets---------', likedTweets)
+
       return res.render('like', {
         userData: user,
         likedTweets,
