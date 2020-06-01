@@ -42,7 +42,7 @@
                 <p>{{this.introduction}} ...</p>
               </div>
               {{#ifCond this.id ../user.id}}
-                <a href="/users/{{../userData.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
+                <a href="/users/{{../user.id}}/edit" class="btn btn-lg btn-outline-primary mx-auto">Edit Profile</a>
         {{else}}
           {{#if this.isFollowed }}
             <form action="/followships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
