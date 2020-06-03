@@ -16,14 +16,17 @@
   <nav class="navbar navbar-light" style="background-color: #a8d6d8;">
     <a class="navbar-brand" href="/">Simple Twitter</a>
     {{#if user}}
-      <div class="float-right">
+      <div class="row" style="align-items: flex-end;">
         {{#ifCond user.role "admin"}}
-          <a href="/admin" class="navbar-brand align-bottom">
+          <a href="/admin" class="navbar-brand">
             <h6>Admin 後台</h6>
           </a>
         {{/ifCond}}
-
-        <a class="d-inline-block" href="/users/{{user.id}}/tweets">
+        <a type="button" class="navbar-brand" data-toggle="modal" data-target="#exampleModal" data-whatever="@maaaaa"
+          href="">
+          <h3><i class=" fa fa-comment-o fa-3" aria-hidden="true"></i></h3>
+        </a>
+        <a class="navbar-brand" href="/users/{{user.id}}/tweets">
           <img src="{{user.avatar}}" width="50" height="50" class="align-top" alt="" loading="lazy">
         </a>
         <a class="navbar-brand align-bottom" href="/logout">
@@ -32,6 +35,35 @@
       </div>
     {{/if}}
   </nav>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Recipient:</label>
+              <input type="text" class="form-control" id="recipient-name">
+            </div>
+            <div class="form-group">
+              <label for="message-text" class="col-form-label">Message:</label>
+              <textarea class="form-control" id="message-text"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="send" class="btn btn-primary">Send message</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <main role="main">
     <div class="container">
       {{#if success_messages}}
@@ -49,6 +81,7 @@
 
     </div>
   </main>
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
@@ -58,6 +91,14 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
+  {{#if user}}
+    <script>
+      const userData = {}
+      userData.id = {{ user.id }}
+      userData.name = "{{ user.name }}"
+    </script>
+    <script src="/javascripts/client.js"></script>
+  {{/if}}
 </body>
 
 </html>
