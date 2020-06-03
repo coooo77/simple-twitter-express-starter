@@ -5,7 +5,7 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const pageLimit = 10
-
+const API_KEY = process.env.API_KEY
 
 const twitterController = {
   getTweets: async (req, res) => {
@@ -48,9 +48,19 @@ const twitterController = {
     users = users.sort((a, b) => b.FollowersCount - a.FollowersCount)
     const userData = users.splice(0, 10)
     let top10PopularUsers = JSON.parse(JSON.stringify(userData))
-    return res.render('tweets', { tweets, top10PopularUsers, page, totalPage, prev, next })
+
+    return res.render('tweets', {
+      tweets,
+      top10PopularUsers,
+      page,
+      totalPage,
+      prev,
+      next,
+      API_KEY
+    })
   },
   postTweets: async (req, res) => {
+    const { description, location, latitude, longitude } = req.body
     if (!req.body.description) {
       req.flash('error_messages', "description didn't exist")
       return res.redirect('back')
@@ -60,8 +70,11 @@ const twitterController = {
     }
     try {
       await Tweet.create({
-        description: req.body.description,
-        UserId: helpers.getUser(req).id
+        description,
+        UserId: helpers.getUser(req).id,
+        location,
+        latitude,
+        longitude
       })
       return res.redirect('/tweets')
     } catch (error) {
