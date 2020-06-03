@@ -327,7 +327,8 @@ const userController = {
         numOfTweeks,
         numOfLikedTweets,
         numOfFollowers,
-        numOfFollowings
+        numOfFollowings,
+        Google_API_KEY
       })
     } catch (error) {
       console.error(error)
