@@ -5,7 +5,7 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const pageLimit = 10
-const API_KEY = process.env.API_KEY
+const Google_API_KEY = process.env.Google_API_KEY
 
 const twitterController = {
   getTweets: async (req, res) => {
@@ -56,7 +56,7 @@ const twitterController = {
       totalPage,
       prev,
       next,
-      API_KEY
+      Google_API_KEY
     })
   },
   postTweets: async (req, res) => {

@@ -76,8 +76,6 @@
 
     {{#each tweets}}
       {{#if this.location}}
-
-
         <div class="modal fade bd-location{{this.id}}-modal-lg" tabindex="-1" role="dialog"
           aria-labelledby="myLargeModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg">
@@ -177,6 +175,6 @@
   </div>
 </div>
 
-<script src="/javascripts/googleMap.js"></script>
+<script src="/javascripts/googleMapForTweets.js"></script>
 <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&callback=initMap&libraries=places"></script>
+  src="https://maps.googleapis.com/maps/api/js?key={{Google_API_KEY}}&callback=initMap&libraries=places"></script>

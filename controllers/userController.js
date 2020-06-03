@@ -9,7 +9,7 @@ const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
 const Sequelize = require('sequelize');
-
+const Google_API_KEY = process.env.Google_API_KEY
 
 const userController = {
 
@@ -159,7 +159,8 @@ const userController = {
         numOfTweeks,
         numOfLikedTweets,
         numOfFollowers,
-        numOfFollowings
+        numOfFollowings,
+        Google_API_KEY
       })
     } catch (error) {
       console.error(error)
