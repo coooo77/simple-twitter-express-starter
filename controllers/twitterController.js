@@ -134,9 +134,9 @@ const twitterController = {
     }
   },
   postTweetReplies: async (req, res) => {
-    // if (!req.body.comment || !req.body.userId) {      
-    //   return res.redirect('back')
-    // }
+    if (!req.body.comment || !helpers.getUser(req).id) {
+      return res.redirect('back')
+    }
     try {
       const reply = await Reply.create({
         TweetId: req.params.tweet_id,
