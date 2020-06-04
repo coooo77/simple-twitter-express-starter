@@ -124,7 +124,8 @@ const twitterController = {
         numOfFollowers,
         numOfFollowings,
         isFollowed,
-        isLiked
+        isLiked,
+        Google_API_KEY
       })
     } catch (error) {
       console.error(error)
