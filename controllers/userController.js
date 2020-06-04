@@ -172,7 +172,7 @@ const userController = {
   addFollowing: async (req, res) => {
     if (Number(req.body.id) === helpers.getUser(req).id) {
       req.flash('error_messages', '不可追蹤本身用戶!')
-      return res.redirect('back')
+      return res.render('tweets')
     }
     try {
       await Followship.create({
