@@ -3,6 +3,12 @@ let outPutData = {}
 const dataForOutput = document.getElementById('dataForOutput')
 const tagPosition = document.querySelector('.googleMapTag')
 
+function handleLocationError(infoWindow, content, position) {
+  infoWindow.setPosition(position)
+  infoWindow.setContent(content)
+  infoWindow.open(map)
+}
+
 function initMap() {
   // 建立打開Google Map會看到的初始地點
   const options = {
@@ -13,6 +19,24 @@ function initMap() {
     zoom: 8
   }
   map = new google.maps.Map(document.getElementById('map'), options);
+
+  // 顯示使用者目前所在位置
+  let currentPosition = new google.maps.InfoWindow
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (p) {
+      const position = {
+        lat: p.coords.latitude,
+        lng: p.coords.longitude
+      }
+      currentPosition.setPosition(position)
+      currentPosition.setContent('Your location')
+      currentPosition.open(map);
+    }, function () {
+      handleLocationError(currentPosition, 'Geolocation service failed！', map.getCenter())
+    })
+  } else {
+    handleLocationError(currentPosition, 'No geolocation available！', map.getCenter())
+  }
 
   // 建立搜尋功能
   const input = document.getElementById('search')
