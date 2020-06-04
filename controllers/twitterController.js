@@ -178,6 +178,11 @@ const twitterController = {
       req.flash('error_messages', '無法取消Like，請稍後再嘗試!')
       return res.redirect('back')
     }
+  },
+
+  invalidUrl: (req, res) => {
+    req.flash('error_messages', '您進入非預期的網址')
+    return res.redirect('/tweets')
   }
 }
 
