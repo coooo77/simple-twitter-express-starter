@@ -36,6 +36,7 @@ function initMap() {
     // create bounds object which is the coordinate boundaries of map
     const bounds = new google.maps.LatLngBounds()
     // add marker for each places and adjust the bounds of map
+
     places.forEach((p, i) => {
       if (!p.geometry) return
       // 根據搜尋到的地圖資料去顯示標籤(marker)
@@ -54,26 +55,42 @@ function initMap() {
       }
       map.fitBounds(bounds)
 
-      const contentString = p.name
+      const contentString = `<h3 class="w-100 text-center">${p.name}</h3>` + `<small>click Add Location to add</small>`
       infoWindow.push(new google.maps.InfoWindow)
       infoWindow[i].setContent(contentString)
 
-      markers[i].addListener('click', () => {
-        infoWindow[i].open(map, markers[i])
-        input.value = contentString
+      // 如果資料只有一個，就直接塞到輸出資料裡面，讓使用者不用點選地點
+      // 反之，如果資料不只一個，就給予addListener，讓使用者點選想要的地點
+      if (places.length !== 1) {
+        markers[i].addListener('click', () => {
+          infoWindow[i].open(map, markers[i])
+          input.value = p.name
+          Object.assign(outPutData, {
+            location: p.name,
+            latitude: markers[i].position.lat(),
+            longitude: markers[i].position.lng()
+          })
+        })
+      } else {
+        markers[i].addListener('click', () => {
+          infoWindow[i].open(map, markers[i])
+        })
         Object.assign(outPutData, {
           location: p.name,
           latitude: markers[i].position.lat(),
           longitude: markers[i].position.lng()
         })
-      })
+      }
     })
   })
 }
 
 const inputBtn = document.getElementById('inputBtn')
+const quitBtn = document.getElementById('quitBtn')
 inputBtn.addEventListener('click', () => {
+  // 清除打卡圖示、暫存的地點資料(給資料庫的資料)
   dataForOutput.innerHTML = ''
+  tagPosition.innerHTML = ''
   const dataExist = Object.keys(outPutData)
   if (dataExist.length === 3) {
     console.log('outPutData', outPutData)
@@ -91,6 +108,7 @@ inputBtn.addEventListener('click', () => {
     tagPosition.innerHTML += tagHTML
     removeTag()
     window.alert('Location added！')
+    quitBtn.click()
   } else {
     window.alert('Please search and click a location to add！')
   }
