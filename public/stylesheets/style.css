@@ -1,0 +1,40 @@
+.content{
+  background-color: #aedcde;
+  width: fit-content;
+  position: relative;
+  display: block;
+  clear: both;
+  overflow-wrap:anywhere;
+}
+
+.message-from::before{
+  color: #aedcde;
+  content: "\f0d9";
+  position: relative;
+  right: 12px;
+}
+
+.message-to{
+  float: right;
+}
+
+.message-to::before{
+  color: #aedcde;
+  content: "\f0da";
+  position: relative;
+  left: 12px;
+  float: right;
+}
+
+.message-container{
+  display:flex;
+  flex-direction:column-reverse;
+  height: 20rem;
+  overflow: auto;
+}
+
+.badge-new-message{
+  padding-bottom: .4em;
+  border-radius: 20rem;
+  margin-left: 2px;
+}

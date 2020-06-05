@@ -20,10 +20,20 @@ wss.on('connection', ws => {
   ws.on('message', event => {
     let data = JSON.parse(event)
     switch (data.type) {
-      case 'login':
+      //紀錄當前線上用戶
+      case 'login': {
         onlineUser.push(data.userData);
+        let userList = {
+          type: 'onlineUserList',
+          onlineUser: onlineUser
+        }
+        clients.forEach(client => {
+          client.send(JSON.stringify(userList))
+        })
         break;
-      case 'message':
+      }
+      //當用戶send message to socket server將訊息廣播到每個用戶讓id符合toId的使用者認領
+      case 'message': {
         if (data.toId && data.content) {
           clients.forEach(client => {
             client.send(JSON.stringify(data))
@@ -31,7 +41,7 @@ wss.on('connection', ws => {
           // ws.send(JSON.stringify(data))
         }
         break;
-
+      }
     }
     console.log(data)
     console.log(onlineUser)
@@ -40,6 +50,7 @@ wss.on('connection', ws => {
   //當 WebSocket 的連線關閉時執行
   ws.on('close', () => {
     console.log('One client has disconnected.')
+    //當有用戶離線就重新 render online user list
     onlineUser.length = 0
     clients.forEach(client => {
       let data = { type: 'reorganize' }
