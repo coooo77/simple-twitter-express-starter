@@ -34,7 +34,8 @@
         {{#each followings}}
           <div class="list-group-item mb-2 row d-flex p-2" style="border-radius: 7px;">
             <div class="col-4 d-flex pt-2 pl-1">
-              <img style="left:-7px;" src="{{this.avatar}}" width="80" height="80" alt="user avatar">
+              <img style="left:-7px;border-radius:0.7rem;" src="{{this.avatar}}" width="80" height="80"
+                alt="user avatar">
             </div>
             <div class="col-8 p-2">
               <a class="mb-1" href="/users/{{this.id}}/tweets">@{{this.name}} </a>

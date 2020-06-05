@@ -23,16 +23,17 @@ ws.onmessage = event => {
   switch (data.type) {
     case 'onlineUserList': { //socket server更新線上用戶list
 
-      let onlineUserTabList = document.querySelector('#v-pills-tab')
-      let tabContentContainer = document.querySelector('#v-pills-tabContent')
+      let onlineUserTabList = document.querySelector('#v-pills-tab')  //user tabs container
+      let messageContainer = document.querySelector('#v-pills-tabContent') //messages container
       onlineUserTabList.innerHTML = ''
-      tabContentContainer.innerHTML = ''
+      messageContainer.innerHTML = '<div class="tab-pane fade active show" style="flex: auto;"><p class="content rounded message-init fa p-2">please choose the user for send/receive message</div>'  //提示先選user tab再發送訊息
       let userTab = ''
       let userPanels = ''
+      document.querySelector('#chat-with').innerText = ''
+
       for (user of data.onlineUser) {
         if (user.id !== userData.id) {
-          // userTab += `<li class="online-user list-group-item list-group-item-action" value="${user.id}">${user.name}</li>`
-          userTab += `<a class="nav-link online-user p-2" name="${user.id}" id="v-pills-${user.id}-tab" data-toggle="pill" href="#v-pills-${user.id}" role="tab"
+          userTab += `<a class="nav-link online-user p-2" data-id="${user.id}" data-name="${user.name}" id="v-pills-${user.id}-tab" data-toggle="pill" href="#v-pills-${user.id}" role="tab"
                 aria-controls="v-pills-${user.id}" aria-selected="true">${user.name}</a>`
 
           userPanels += `<div class="tab-pane fade message-${user.id}-content" id="v-pills-${user.id}" role="tabpanel" aria-labelledby="v-pills-${user.id}-tab">
@@ -40,7 +41,7 @@ ws.onmessage = event => {
         }
       }
       onlineUserTabList.innerHTML = userTab
-      tabContentContainer.innerHTML = userPanels
+      messageContainer.innerHTML += userPanels
       break;
     }
     case 'message': { //有用戶發送訊息,對比toId如果符合本身id則顯示訊息
@@ -66,7 +67,7 @@ ws.onmessage = event => {
         if (!modal.classList.contains('show')) {  //如果modal是關閉狀態
           if (messageIcon.classList.contains('fa-comment-o')) {
             messageIcon.classList.remove('fa-comment-o')
-            messageIcon.classList.add('fa-commenting', 'text-success')  //將訊息icon改為綠色有內容的樣式,已表示有新訊息未讀
+            messageIcon.classList.add('fa-commenting', 'text-danger')  //將訊息icon改為紅色有內容的樣式,已表示有新訊息未讀
           }
         }
       }
@@ -95,13 +96,21 @@ $('#exampleModal').on('show.bs.modal', function (event) { //開啟modal
   var modal = $(this)
   modal.find('.modal-title').text('Message to online users')
 
+  let messageIcon = document.querySelector('#message-icon')
+  if (!document.querySelector('.badge-new-message')) {  //如果已經沒有新訊息badge存在
+    if (messageIcon.classList.contains('fa-commenting')) {  //如果訊息icon仍為紅色,就改回原本樣式
+      messageIcon.classList.remove('fa-commenting', 'text-danger')
+      messageIcon.classList.add('fa-comment-o')
+    }
+  }
+
 })
 
 document.querySelector('#send').addEventListener('click', function (event) {
   let content = document.querySelector('#message-text').value
   let messageToName = document.querySelector('#chat-with').innerText
-  let messageToId = document.querySelector('#chat-with').value
-  if (content && messageToId) {
+  let messageToId = document.querySelector('#chat-with').dataset.id
+  if (content && messageToName) {
     let data = {
       type: 'message',
       fromId: userData.id,
@@ -110,37 +119,40 @@ document.querySelector('#send').addEventListener('click', function (event) {
       date: Date.now()
     }
     ws.send(JSON.stringify(data))
+    document.querySelector('#message-text').value = ''
   }
   else {
     if (!content) {
       alert('you can\'t sent empty messge')
     }
-    if (!messageToId) {
+    if (!messageToName) {
       alert('please choose a user for sending messsages to!')
     }
   }
 })
 
-// document.querySelector('#online-user').addEventListener('click', function (event) {
+
 document.querySelector('#v-pills-tab').addEventListener('click', function (event) {
 
   let targetElement = event.target
+
   if (targetElement.classList.contains('online-user')) {
-    console.log('targetEle', targetElement.name)
-    let onlineUserId = targetElement.name
+
+    let onlineUserId = targetElement.dataset.id
+    let onlineUserName = targetElement.dataset.name
 
     if (document.querySelector(`#unread-${onlineUserId}-tag`)) {  //如果這個tab有未讀訊息badge
       document.querySelector(`#unread-${onlineUserId}-tag`).remove()  //將這個tab上的未讀badge移除
       let messageIcon = document.querySelector('#message-icon')
       if (!document.querySelector('.badge-new-message')) {  //如果已經沒有新訊息badge存在
-        if (messageIcon.classList.contains('fa-commenting')) {  //如果訊息icon仍為綠色,就改回原本樣式
-          messageIcon.classList.remove('fa-commenting', 'text-success')
+        if (messageIcon.classList.contains('fa-commenting')) {  //如果訊息icon仍為紅色,就改回原本樣式
+          messageIcon.classList.remove('fa-commenting', 'text-danger')
           messageIcon.classList.add('fa-comment-o')
         }
       }
     }
-    document.querySelector('#chat-with').value = onlineUserId
-    document.querySelector('#chat-with').innerText = targetElement.innerText
+    document.querySelector('#chat-with').dataset.id = onlineUserId
+    document.querySelector('#chat-with').innerText = onlineUserName
 
   }
 })

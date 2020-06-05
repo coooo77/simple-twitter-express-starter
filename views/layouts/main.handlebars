@@ -14,8 +14,8 @@
 
 <body>
   <!-- Image and text -->
-  <nav class="navbar navbar-light" style="background-color: #a8d6d8;">
-    <a class="navbar-brand ml-3" href="/">Simple Twitter</a>
+  <nav class="navbar navbar-light" style="background-color: #2a96a0;">
+    <a class="navbar-brand ml-3" style="font-size:1.5rem;" href="/">Simple Twitter</a>
     {{#if user}}
       <div class="row" style="align-items: flex-end;">
         {{#ifCond user.role "admin"}}
@@ -27,10 +27,12 @@
           <h3><i class=" fa fa-comment-o fa-3" id="message-icon" aria-hidden="true"></i></h3>
         </a>
         <a class="navbar-brand" href="/users/{{user.id}}/tweets">
-          <img src="{{user.avatar}}" width="50" height="50" class="align-top" alt="" loading="lazy">
+          <img src="{{user.avatar}}" width="50" height="50" class="align-top" style="border-radius:2rem;" alt=""
+            loading="lazy">
         </a>
         <a class="navbar-brand align-bottom" href="/logout">
-          <h6>Logout</h6>
+          <h4><i class="fa fa-sign-out" aria-hidden="true" data-toggle="tooltip" data-placement="icon"
+              title="Logout"></i></h4>
         </a>
       </div>
     {{/if}}
@@ -51,11 +53,11 @@
 
             </div>
           </div>
-          <div class="col-9">
-            <div class="card border mb-3" style="max-width: 18rem;">
+          <div class="col-9 pl-0">
+            <div class="card border mb-3" style="max-width: 20rem;">
 
               <div class="card-header p-2" style="height: 41px;background-color:#aedcde;">
-                <div class="d-inline" id="chat-with"></div>
+                <div class="d-inline" id="chat-with" data-id=""></div>
               </div>
 
               <div class="tab-content card-body message-container" id="v-pills-tabContent">
