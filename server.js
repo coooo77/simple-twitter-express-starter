@@ -43,8 +43,7 @@ wss.on('connection', ws => {
         break;
       }
     }
-    console.log(data)
-    console.log(onlineUser)
+
   })
 
   //當 WebSocket 的連線關閉時執行
