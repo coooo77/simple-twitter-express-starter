@@ -65,4 +65,7 @@ module.exports = (app, passport) => {
   app.get('/users/:id/followers', authenticated, userController.getFollowers)
   app.get('/users/:id/followings', authenticated, userController.getFollowings)
   app.get('/users/:id/likes', authenticated, userController.getLikes)
+
+  /****  code 404  ****/
+  app.all('*', twitterController.invalidUrl)
 }

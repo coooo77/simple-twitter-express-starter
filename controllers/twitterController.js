@@ -5,7 +5,7 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const pageLimit = 10
-
+const Google_API_KEY = process.env.Google_API_KEY
 
 const twitterController = {
   getTweets: async (req, res) => {
@@ -48,9 +48,19 @@ const twitterController = {
     users = users.sort((a, b) => b.FollowersCount - a.FollowersCount)
     const userData = users.splice(0, 10)
     let top10PopularUsers = JSON.parse(JSON.stringify(userData))
-    return res.render('tweets', { tweets, top10PopularUsers, page, totalPage, prev, next })
+
+    return res.render('tweets', {
+      tweets,
+      top10PopularUsers,
+      page,
+      totalPage,
+      prev,
+      next,
+      Google_API_KEY
+    })
   },
   postTweets: async (req, res) => {
+    const { description, location, latitude, longitude } = req.body
     if (!req.body.description) {
       req.flash('error_messages', "description didn't exist")
       return res.redirect('back')
@@ -60,8 +70,11 @@ const twitterController = {
     }
     try {
       await Tweet.create({
-        description: req.body.description,
-        UserId: helpers.getUser(req).id
+        description,
+        UserId: helpers.getUser(req).id,
+        location,
+        latitude,
+        longitude
       })
       return res.redirect('/tweets')
     } catch (error) {
@@ -111,7 +124,8 @@ const twitterController = {
         numOfFollowers,
         numOfFollowings,
         isFollowed,
-        isLiked
+        isLiked,
+        Google_API_KEY
       })
     } catch (error) {
       console.error(error)
@@ -120,9 +134,9 @@ const twitterController = {
     }
   },
   postTweetReplies: async (req, res) => {
-    // if (!req.body.comment || !req.body.userId) {      
-    //   return res.redirect('back')
-    // }
+    if (!req.body.comment || !helpers.getUser(req).id) {
+      return res.redirect('back')
+    }
     try {
       const reply = await Reply.create({
         TweetId: req.params.tweet_id,
@@ -164,6 +178,11 @@ const twitterController = {
       req.flash('error_messages', '無法取消Like，請稍後再嘗試!')
       return res.redirect('back')
     }
+  },
+
+  invalidUrl: (req, res) => {
+    req.flash('error_messages', '您進入非預期的網址')
+    return res.redirect('/tweets')
   }
 }
 

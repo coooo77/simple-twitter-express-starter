@@ -69,6 +69,7 @@ describe('# reply request', () => {
       it('will redirect to index', (done) => {
         request(app)
           .post('/tweets/1/replies')
+          .send('comment=comment')
           .set('Accept', 'application/json')
           .expect(302)
           .end(function (err, res) {

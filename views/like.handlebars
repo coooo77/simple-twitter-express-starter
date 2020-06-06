@@ -37,7 +37,7 @@
               <img style="left:-7px;border-radius:0.7rem;" src="{{this.User.avatar}}" width="80" height="80"
                 alt="user avatar">
             </div>
-            <div class="col-8 p-2">
+            <div class="col-10 p-2 ml-0">
               <a class="mb-1" href="/users/{{this.User.id}}/tweets">@{{this.User.name}} </a>
               <div class="d-flex justify-content-between" style="overflow-wrap:anywhere">
                 <p>{{this.description}} ...</p>
@@ -65,6 +65,13 @@
                     </form>
                   {{/if}}
                 {{/if}}
+                {{#if this.location}}
+                  <!-- Large modal -->
+                  <button type="button" class="btn btn-outline-info float-right ml-auto mr-3" data-toggle="modal"
+                    data-target=".bd-location{{this.id}}-modal-lg" id="tweetLocation" data-location="{{this.location}}"
+                    data-lat="{{this.latitude}}" data-lng="{{this.longitude}}" data-id="{{this.id}}">
+                    At {{this.location}}</button>
+                {{/if}}
               </div>
             </div>
           </div>
@@ -73,3 +80,24 @@
     </div>
   </div>
 </div>
+
+{{#each likedTweets}}
+  {{#if this.location}}
+    <div class="modal fade bd-location{{this.id}}-modal-lg" tabindex="-1" role="dialog"
+      aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          {{!-- google Map --}}
+          <div id="map_{{this.id}}" style="height: 75vh;"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+{{/each}}
+
+<script src="/javascripts/googleMap.js"></script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key={{Google_API_KEY}}&callback=initMap&libraries=places"></script>
