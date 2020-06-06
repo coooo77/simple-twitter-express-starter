@@ -9,7 +9,7 @@ const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
 const Sequelize = require('sequelize');
-
+const Google_API_KEY = process.env.Google_API_KEY
 
 const userController = {
 
@@ -111,7 +111,7 @@ const userController = {
       let user = await User.findByPk(req.params.id, {
         include: [
           { model: Tweet },
-          { model: Like, include: [Tweet] },
+          { model: Like, include: [{ model: Tweet, include: [User] }] },
           { model: User, as: 'Followers' },
           { model: User, as: 'Followings' },
         ],
@@ -159,7 +159,8 @@ const userController = {
         numOfTweeks,
         numOfLikedTweets,
         numOfFollowers,
-        numOfFollowings
+        numOfFollowings,
+        Google_API_KEY
       })
     } catch (error) {
       console.error(error)
@@ -171,7 +172,7 @@ const userController = {
   addFollowing: async (req, res) => {
     if (Number(req.body.id) === helpers.getUser(req).id) {
       req.flash('error_messages', '不可追蹤本身用戶!')
-      return res.redirect('back')
+      return res.render('tweets')
     }
     try {
       await Followship.create({
@@ -326,7 +327,8 @@ const userController = {
         numOfTweeks,
         numOfLikedTweets,
         numOfFollowers,
-        numOfFollowings
+        numOfFollowings,
+        Google_API_KEY
       })
     } catch (error) {
       console.error(error)

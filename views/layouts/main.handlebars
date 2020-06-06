@@ -9,29 +9,74 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
     integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 
 <body>
   <!-- Image and text -->
-  <nav class="navbar navbar-light" style="background-color: #a8d6d8;">
-    <a class="navbar-brand" href="/">Simple Twitter</a>
+  <nav class="navbar navbar-light" style="background-color: #2a96a0;">
+    <a class="navbar-brand ml-3" style="font-size:1.5rem;" href="/">Simple Twitter</a>
     {{#if user}}
-      <div class="float-right">
+      <div class="row" style="align-items: flex-end;">
         {{#ifCond user.role "admin"}}
-          <a href="/admin" class="navbar-brand align-bottom">
+          <a href="/admin" class="navbar-brand">
             <h6>Admin 後台</h6>
           </a>
         {{/ifCond}}
-
-        <a class="d-inline-block" href="/users/{{user.id}}/tweets">
-          <img src="{{user.avatar}}" width="50" height="50" class="align-top" alt="" loading="lazy">
+        <a type="button" class="navbar-brand" data-toggle="modal" data-target="#exampleModal" href="">
+          <h3><i class=" fa fa-comment-o fa-3" id="message-icon" aria-hidden="true"></i></h3>
+        </a>
+        <a class="navbar-brand" href="/users/{{user.id}}/tweets">
+          <img src="{{user.avatar}}" width="50" height="50" class="align-top" style="border-radius:2rem;" alt=""
+            loading="lazy">
         </a>
         <a class="navbar-brand align-bottom" href="/logout">
-          <h6>Logout</h6>
+          <h4><i class="fa fa-sign-out" aria-hidden="true" data-toggle="tooltip" data-placement="icon"
+              title="Logout"></i></h4>
         </a>
       </div>
     {{/if}}
   </nav>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="row modal-body">
+          <div class="col-3">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+            </div>
+          </div>
+          <div class="col-9 pl-0">
+            <div class="card border mb-3" style="max-width: 20rem;">
+
+              <div class="card-header p-2" style="height: 41px;background-color:#aedcde;">
+                <div class="d-inline" id="chat-with" data-id=""></div>
+              </div>
+
+              <div class="tab-content card-body message-container" id="v-pills-tabContent">
+              </div>
+
+              <div class="card-footer input-group p-0">
+                <textarea type="text" class="form-control border-0 shadow-none" style="border-top-left-radius:0;"
+                  id="message-text" required></textarea>
+                <div class="input-group-append m-0">
+                  <button class="btn btn-info border-0" style="border-top-right-radius:0;" type="button" id="send">Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <main role="main">
     <div class="container">
       {{#if success_messages}}
@@ -49,6 +94,7 @@
 
     </div>
   </main>
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
@@ -58,6 +104,14 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
+  {{#if user}}
+    <script>
+      const userData = {}
+      userData.id = {{ user.id }}
+      userData.name = "{{ user.name }}"
+    </script>
+    <script src="/javascripts/client.js"></script>
+  {{/if}}
 </body>
 
 </html>

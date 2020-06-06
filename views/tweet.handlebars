@@ -53,7 +53,7 @@
     </div>
     <div class="list-group-item row d-flex mt-4 mb-5 mx-0 rounded">
       <div class="col-2 px-0 mr-sm-0 mr-2 my-2" style="max-width: fit-content;">
-        <img src="{{tweetOwner.avatar}}" width="80" height="80" alt="">
+        <img style="border-radius:0.7rem;" src="{{tweetOwner.avatar}}" width="80" height="80" alt="">
       </div>
       <div class="col-9 col-lg-10 px-0 pl-sm-3">
         <a class="mb-1" href="/users/{{tweetOwner.id}}/tweets">@{{tweetOwner.name}}</a>
@@ -81,9 +81,33 @@
               </form>
             {{/if}}
           {{/if}}
+          {{#if tweet.location}}
+            <!-- Large modal -->
+            <button type="button" class="btn btn-outline-info float-right ml-auto mr-1" data-toggle="modal"
+              data-target=".bd-location{{tweet.id}}-modal-lg" id="tweetLocation" data-location="{{tweet.location}}"
+              data-lat="{{tweet.latitude}}" data-lng="{{tweet.longitude}}" data-id="{{tweet.id}}">
+              At {{tweet.location}}</button>
+          {{/if}}
         </div>
       </div>
     </div>
+
+
+    {{#if tweet.location}}
+      <div class="modal fade bd-location{{tweet.id}}-modal-lg" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            {{!-- google Map --}}
+            <div id="map_{{tweet.id}}" style="height: 75vh;"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
 
     {{!-- section Replies --}}
     <div class="position-relative" style="right: 0.5em;">
@@ -94,7 +118,7 @@
         {{#each replies}}
           <div class="list-group-item row d-flex my-1 mx-0 rounded">
             <div class="col-2 px-0 mr-sm-0 mr-2 my-2" style="max-width: fit-content;">
-              <img src="{{this.User.avatar}}" width="80" height="80" alt="">
+              <img style="border-radius:0.7rem;" src="{{this.User.avatar}}" width="80" height="80" alt="">
             </div>
             <div class="col-9 col-lg-10 px-0 pl-sm-3">
               <a class="mb-1" href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
@@ -125,3 +149,6 @@
 </div>
 
 <script src="/javascripts/main.js"></script>
+<script src="/javascripts/googleMap.js"></script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key={{Google_API_KEY}}&callback=initMap&libraries=places"></script>

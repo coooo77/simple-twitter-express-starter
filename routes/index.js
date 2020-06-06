@@ -14,7 +14,7 @@ module.exports = (app, passport) => {
   }
   const authenticatedAdmin = (req, res, next) => {
     if (helpers.ensureAuthenticated(req)) {
-      if (helpers.getUser(req).role === 'Admin') { return next() }
+      if (helpers.getUser(req).role === 'admin') { return next() }
       return res.redirect('/')
     }
     res.redirect('/signin')
@@ -65,4 +65,7 @@ module.exports = (app, passport) => {
   app.get('/users/:id/followers', authenticated, userController.getFollowers)
   app.get('/users/:id/followings', authenticated, userController.getFollowings)
   app.get('/users/:id/likes', authenticated, userController.getLikes)
+
+  /****  code 404  ****/
+  app.all('*', twitterController.invalidUrl)
 }
