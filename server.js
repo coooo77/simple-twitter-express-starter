@@ -9,7 +9,7 @@ module.exports = (server) => {
   //   console.log(`Listening on ${port}`)
   // })
 
-  const wss = new SocketServer({ server })
+  const wss = new SocketServer({ server: server })
   let onlineUser = []
   // 監聽是否有新的 client 連上線
   wss.on('connection', ws => {
