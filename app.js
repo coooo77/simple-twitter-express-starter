@@ -50,4 +50,4 @@ const server = app.listen(port, () => console.log(`Example app listening on port
 
 require('./routes')(app, passport)
 module.exports = app
-module.exports = server
+require('./server.js')(server)
