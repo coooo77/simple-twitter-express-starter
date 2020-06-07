@@ -4,7 +4,7 @@ const port = 3333
 
 // const ws = new WebSocket(`ws://localhost:${port}`)
 
-const ws = new WebSocket(`ws://simple-twitter-a.herokuapp.com:${port}`)
+const ws = new WebSocket(`wss://simple-twitter-a.herokuapp.com:${port}`)
 
 // 連線建立後,傳送user資料給webSocketServer
 ws.onopen = () => {
