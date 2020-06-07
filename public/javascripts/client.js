@@ -1,7 +1,4 @@
 // 建立一個 WebSocket 物件，並連上 socket server
-const port = 3333
-
-
 // const ws = new WebSocket(`ws://localhost:${port}`)
 
 const ws = new WebSocket('wss://simple-twitter-a.herokuapp.com')
