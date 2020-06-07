@@ -46,7 +46,8 @@ app.use((req, res, next) => {
   res.locals.user = helpers.getUser(req)
   next()
 })
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 require('./routes')(app, passport)
 module.exports = app
+module.exports = server
