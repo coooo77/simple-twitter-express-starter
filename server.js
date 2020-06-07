@@ -33,7 +33,7 @@ module.exports = (server) => {
             onlineUser: JSON.parse(JSON.stringify(onlineUser))
           }
           clients.forEach(client => {
-            client.send(JSON.stringify(userList))
+            client.send(userList)
           })
           break;
         }
