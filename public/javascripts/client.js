@@ -2,7 +2,7 @@
 if (process.env.NODE_ENV !== 'production') {
   const ws = new WebSocket('ws://localhost:3333')
 } else {
-  const ws = new WebSocket('ws://simple-twitter-express.herokuapp.com:3333')
+  const ws = new WebSocket('ws://simple-twitter-express.herokuapp.com/:3333')
 }
 
 // 連線建立後,傳送user資料給webSocketServer
