@@ -1,7 +1,7 @@
 const express = require('express')
 const SocketServer = require('ws').Server
 
-const port = process.env.PORT || 3333
+const port = 3333
 
 // 建立 express 物件並綁定在 port 3333
 const server = express().listen(port, () => {
