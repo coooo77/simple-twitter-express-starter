@@ -14,10 +14,9 @@
     "logging": false
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "use_env_variable": "CLEARDB_DATABASE_URL",
+    "database": "heroku_7c1b8659d4a7fbc",
+    "host": "us-cdbr-east-05.cleardb.net",
     "dialect": "mysql"
   }
 }

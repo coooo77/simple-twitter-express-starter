@@ -2,7 +2,7 @@ const express = require('express')
 const helpers = require('./_helpers');
 const handlebars = require('express-handlebars')
 const app = express()
-const port = 3050
+const port = process.env.PORT || 3000
 const bodyParser = require('body-parser')
 const flash = require('connect-flash')
 const session = require('express-session')
@@ -46,7 +46,8 @@ app.use((req, res, next) => {
   res.locals.user = helpers.getUser(req)
   next()
 })
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 require('./routes')(app, passport)
 module.exports = app
+require('./server.js')(server)
