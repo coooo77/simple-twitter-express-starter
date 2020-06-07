@@ -15,8 +15,9 @@
   },
   "production": {
     "use_env_variable": "CLEARDB_DATABASE_URL",
-    "dialect": "postgres",
-    "protocol": "postgres",
+    "dialect": "mysql",
+    "database": "heroku_789b350bb61586a",
+    "host": "us-cdbr-east-05.cleardb.net",
     "dialectOptions": {
       "ssl": {
         "require": true,
