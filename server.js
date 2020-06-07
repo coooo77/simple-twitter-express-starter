@@ -30,10 +30,10 @@ module.exports = (server) => {
           onlineUser.push(userData);
           let userList = {
             type: 'onlineUserList',
-            onlineUser: onlineUser
+            onlineUser: JSON.parse(JSON.stringify(onlineUser))
           }
           clients.forEach(client => {
-            client.send(userList)
+            client.send(JSON.stringify(userList))
           })
           break;
         }
