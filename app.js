@@ -13,8 +13,6 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-// use helpers.getUser(req) to replace req.user
-// use helpers.ensureAuthenticated(req) to replace req.isAuthenticated()
 app.engine('handlebars', handlebars({
   defaultLayout: 'main'
 }))
