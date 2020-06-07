@@ -3,6 +3,7 @@
 
 const ws = new WebSocket('wss://simple-twitter-a.herokuapp.com')
 
+
 // 連線建立後,傳送user資料給webSocketServer
 ws.onopen = () => {
   console.log('open connection to server')
