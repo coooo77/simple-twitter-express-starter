@@ -8,7 +8,6 @@ const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('./config/passport')
 const methodOverride = require('method-override')
-const wdd = require('./server')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
