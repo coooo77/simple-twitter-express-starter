@@ -2,7 +2,8 @@ const express = require('express')
 const SocketServer = require('ws').Server
 
 const port = 3333
-
+console.log(' process.env.PORT ', process.env.PORT)
+console.log(' process.env', process.env)
 // 建立 express 物件並綁定在 port 3333
 const server = express().listen(port, () => {
   console.log(`Listening on ${port}`)
