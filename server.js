@@ -2,13 +2,6 @@ module.exports = (server) => {
 
   const SocketServer = require('ws').Server
 
-  // const port = 3333
-
-  // // 建立 express 物件並綁定在 port 3333
-  // const server = express().listen(port, () => {
-  //   console.log(`Listening on ${port}`)
-  // })
-
   const wss = new SocketServer({ server: server })
   let onlineUser = []
   // 監聽是否有新的 client 連上線
