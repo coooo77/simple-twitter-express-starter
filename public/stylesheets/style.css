@@ -30,16 +30,17 @@ body{
   float: right;
 }
 
-.message-init{
+.no-online-user{
   border: 4px solid #aedcde;
+  text-align: center;
+  width: unset;
 }
 
-.message-init::after{
+.message-init{
   color: #aedcde;
-  content:"\f060";
   position: relative;
-  right: 86px;
-  font-size: 1.5rem;
+  right: 14rem;
+  font-size: 2rem;
   top: -10px;
 }
 
