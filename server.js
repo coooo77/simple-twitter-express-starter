@@ -22,7 +22,11 @@ wss.on('connection', ws => {
     switch (data.type) {
       //紀錄當前線上用戶
       case 'login': {
-        onlineUser.push(data.userData);
+        let userData = {
+          ...data.userData,
+          ws
+        }
+        onlineUser.push(userData);
         let userList = {
           type: 'onlineUserList',
           onlineUser: onlineUser
@@ -47,14 +51,21 @@ wss.on('connection', ws => {
   })
 
   //當 WebSocket 的連線關閉時執行
-  ws.on('close', () => {
+  ws.on('close', (event) => {
     console.log('One client has disconnected.')
-    //當有用戶離線就重新 render online user list
-    onlineUser.length = 0
-    clients.forEach(client => {
-      let data = { type: 'reorganize' }
-      client.send(JSON.stringify(data))
+
+    let logoutUser = -1
+    onlineUser.map((user, index) => {
+      if (user.ws === ws) {
+
+        logoutUser = index
+        clients.forEach(client => {
+          let data = { type: 'logout', logoutUser: user }
+          client.send(JSON.stringify(data)) //廣播告知哪一位user離線了
+        })
+      }
     })
+    onlineUser.splice(logoutUser, 1)
   })
 })
 
