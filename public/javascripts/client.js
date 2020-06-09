@@ -1,15 +1,8 @@
 // 建立一個 WebSocket 物件，並連上 socket server
-<<<<<<< HEAD
-if (process.env.NODE_ENV !== 'production') {
-  const ws = new WebSocket('ws://localhost:3333')
-} else {
-  const ws = new WebSocket('ws://simple-twitter-express.herokuapp.com/:3333')
-}
-=======
 // const ws = new WebSocket(`ws://localhost:${port}`)
 
 const ws = new WebSocket('wss://simple-twitter-a.herokuapp.com')
->>>>>>> 8e2477fddb343e2ec94a7a50a6679e8327c1b725
+
 
 // 連線建立後,傳送user資料給webSocketServer
 ws.onopen = () => {

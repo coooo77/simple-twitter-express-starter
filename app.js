@@ -2,24 +2,17 @@ const express = require('express')
 const helpers = require('./_helpers');
 const handlebars = require('express-handlebars')
 const app = express()
-<<<<<<< HEAD
-const port = process.env.PORT || 3050
-=======
 const port = process.env.PORT || 3000
->>>>>>> 8e2477fddb343e2ec94a7a50a6679e8327c1b725
 const bodyParser = require('body-parser')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('./config/passport')
 const methodOverride = require('method-override')
-const wdd = require('./server')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-// use helpers.getUser(req) to replace req.user
-// use helpers.ensureAuthenticated(req) to replace req.isAuthenticated()
 app.engine('handlebars', handlebars({
   defaultLayout: 'main'
 }))

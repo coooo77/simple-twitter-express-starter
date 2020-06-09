@@ -15,7 +15,6 @@
   },
   "production": {
     "use_env_variable": "CLEARDB_DATABASE_URL",
-<<<<<<< HEAD
     "dialect": "mysql",
     "database": "heroku_789b350bb61586a",
     "host": "us-cdbr-east-05.cleardb.net",
@@ -25,10 +24,5 @@
         "rejectUnauthorized": false
       }
     }
-=======
-    "database": "heroku_7c1b8659d4a7fbc",
-    "host": "us-cdbr-east-05.cleardb.net",
-    "dialect": "mysql"
->>>>>>> 8e2477fddb343e2ec94a7a50a6679e8327c1b725
   }
 }
